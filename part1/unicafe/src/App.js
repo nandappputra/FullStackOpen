@@ -13,6 +13,11 @@ const Headline = ({title}) =>{
 }
 
 const Statistics = ({good,neutral,bad}) =>{
+  if(good===0 && neutral===0 && bad===0){
+    return(
+      <p>No feedback given</p>
+    )
+  }
   return(
     <div>
       <h1>Statistics</h1>
@@ -23,7 +28,6 @@ const Statistics = ({good,neutral,bad}) =>{
       <p>average {(good-bad)/(good+neutral+bad)}</p>
       <p>positive {(good)/(good+neutral+bad)*100} %</p>
     </div>
-    
   )
 }
 
@@ -51,7 +55,7 @@ const App = () => {
       <Button clickHandler={fbGood} name="good"/>
       <Button clickHandler={fbNeutral} name="neutral"/>
       <Button clickHandler={fbBad} name="bad"/>
-      <Statistics good={good} neutral={neutral} bad={neutral} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
 
     </div>
   )
