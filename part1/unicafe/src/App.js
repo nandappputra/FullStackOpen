@@ -12,12 +12,6 @@ const Headline = ({title}) =>{
   )
 }
 
-const Entry = ({name,value}) => {
-  return(
-    <p>{name} {value}</p>
-  )
-}
-
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
@@ -43,9 +37,12 @@ const App = () => {
       <Button clickHandler={fbNeutral} name="neutral"/>
       <Button clickHandler={fbBad} name="bad"/>
       <Headline title="statistics" />
-      <Entry name='good' value={good}/>
-      <Entry name='neutral' value={neutral}/>
-      <Entry name='bad' value={bad}/>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {good+neutral+bad}</p>
+      <p>average {(good-bad)/(good+neutral+bad)}</p>
+      <p>positive {(good)/(good+neutral+bad)*100} %</p>
     </div>
   )
 }
