@@ -9,10 +9,26 @@ const App = () => {
   const nameHandler = (event) => {
     setNewName(event.target.value)
   }
+  
+  const alreadyExist = (name) => {
+    let nameExist=false
+    persons.forEach( (person) => {
+      if (person.name === name){
+        nameExist=true
+      }
+    } )
+    return nameExist
+  }
 
   const saveName = (event) => {
     event.preventDefault()
-    setPersons(persons.concat({name: newName}))
+    if (alreadyExist(newName)){
+      window.alert(`${newName} is already added to phonebook`)
+    }
+    else{
+      setPersons(persons.concat({name: newName}))
+      setNewName('')
+    }
   }
 
   return (
