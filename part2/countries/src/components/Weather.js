@@ -15,7 +15,6 @@ const Weather = ({city}) =>{
 
         axios.get(`http://api.weatherstack.com/current?access_key=${apiKey}&query=${city}&unit=m`)
         .then((resp)=>{
-            console.log(resp)
             updateCurrentWeather(resp.data)})
     }
 
