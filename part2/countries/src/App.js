@@ -16,13 +16,17 @@ const  App = () => {
       .then( (resp) => updateCountries(resp.data) )
   }
 
+  const showDetails = (event) =>{
+    setSearchQuery(event.target.getAttribute('countryname'))
+  }
+
   useEffect(getCountries, [])
   
 
   return (
     <div>
       <Filter value={searchQuery} onChange={updateSearchQuery} />
-      <Result countries={countries} searchQuery={searchQuery} />
+      <Result countries={countries} searchQuery={searchQuery} showDetails={showDetails} />
     </div>
   );
 }
