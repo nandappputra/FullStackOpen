@@ -1,4 +1,5 @@
 import React from "react";
+import Weather from './Weather.js'
 
 const Result = ({countries,searchQuery,showDetails}) =>{
     let results = countries.filter( (country) => (country.name.toLowerCase().includes(searchQuery.toLowerCase())))
@@ -33,6 +34,9 @@ const Result = ({countries,searchQuery,showDetails}) =>{
                 ))}
                 </ul>
                 <img src={results[0].flag} alt={`${results[0].name}'s flag'`} width={100}/>
+                
+                <Weather city={results[0].capital} />
+
             </div>
         )
     }
