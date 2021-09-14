@@ -1,7 +1,7 @@
 import React from "react";
 
-const Result = ({countries,searchQuery}) =>{
-    let results = countries.filter( (country) => (country.name.toLowerCase().includes(searchQuery)))
+const Result = ({countries,searchQuery,showDetails}) =>{
+    let results = countries.filter( (country) => (country.name.toLowerCase().includes(searchQuery.toLowerCase())))
     if (results.length>10){
         return(
             <div>Too many matches, specify another filter</div>
@@ -10,9 +10,12 @@ const Result = ({countries,searchQuery}) =>{
     else if (results.length>1 && results.length<=10){
         return(
             <div>
-                {results.map((country)=>(
-                    <p key={country.name}>{country.name}</p>
-                ))}
+                {results.map((country)=>{ return(
+                    <div key={country.name}>
+                        {country.name}
+                        <button countryname={country.name} onClick={showDetails}>Show</button>
+                    </div>
+                )})}
             </div>
         )
     }
