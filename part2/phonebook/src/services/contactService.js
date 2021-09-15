@@ -12,6 +12,11 @@ const getAllContacts = () =>{
     return req.then((resp) => resp.data)
   }
 
-  let contactService = {getAllContacts, addContact}
+  const deleteContact = (id) =>{
+    let req = axios.delete(baseUrl+`/${id}`)
+    return req.then((resp) => resp.data)
+  }
+
+  let contactService = {getAllContacts, addContact, deleteContact}
 
   export default contactService
