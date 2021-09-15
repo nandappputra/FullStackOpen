@@ -1,9 +1,10 @@
 import React, { useState,useEffect } from 'react'
-import axios from 'axios'
 
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+
+import contactService from './services/contactService'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,18 +13,9 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ searchQuery, setSearchQuery ] = useState('')
 
-  const getAllContacts = () =>{
-    let req = axios.get('http://localhost:3001/persons')
-    return req.then((resp) => resp.data)
-  }
-
-  const addContact = (contact) =>{
-    let req = axios.post('http://localhost:3001/persons',contact)
-    return req.then((resp) => resp.data)
-  }
 
   const obtainContact = () => {
-    getAllContacts().then( (res) =>setPersons(res))
+    contactService.getAllContacts().then( (res) =>setPersons(res))
   }
 
   useEffect(obtainContact,[])
@@ -56,7 +48,7 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`)
     }
     else{
-      addContact({name:newName, number:newNumber}).then( (res) => {
+      contactService.addContact({name:newName, number:newNumber}).then( (res) => {
         setPersons(persons.concat(res))
       })
       setNewName('')
