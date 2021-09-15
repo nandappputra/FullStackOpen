@@ -28,6 +28,20 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const deleteHandler = (event) => {
+    console.log(persons)
+    if(window.confirm(`Delete ${event.target.getAttribute('contactname')}?`)){
+      let contactID = Number(event.target.getAttribute('contactid'))
+      console.log(contactID)
+      contactService.deleteContact(contactID).then( () =>{
+        let a=persons.filter( (person) => (person.id!==contactID))
+        console.log(a)
+        setPersons(a)
+      })
+      
+    }
+  }
+
   const updateSearch = (event) => {
     setSearchQuery(event.target.value)
   }
@@ -63,7 +77,7 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm saveContact={saveContact} newName={newName} nameHandler={nameHandler} newNumber={newNumber} numberHandler={numberHandler} />
       <h2>Numbers</h2>
-      <Persons persons={persons} searchQuery={searchQuery} />
+      <Persons persons={persons} searchQuery={searchQuery} deleteHandler={deleteHandler} />
     </div>
   )
 }

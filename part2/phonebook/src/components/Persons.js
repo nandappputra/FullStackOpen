@@ -1,10 +1,12 @@
 import React from "react";
 
-const Persons = ({persons,searchQuery}) => {
+const Persons = ({persons,searchQuery,deleteHandler}) => {
     return(
         <>
         {persons.filter( (person)=> person.name.toLowerCase().includes(searchQuery)).map( (person) =>
-            <p key={person.name}>{person.name} {person.number}</p>
+            <div key={person.name} >{person.name} {person.number}
+                <button onClick={deleteHandler} contactid={person.id} contactname={person.name}>delete</button>
+            </div>
           )}
         </>
     )
