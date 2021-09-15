@@ -29,13 +29,10 @@ const App = () => {
   }
 
   const deleteHandler = (event) => {
-    console.log(persons)
     if(window.confirm(`Delete ${event.target.getAttribute('contactname')}?`)){
       let contactID = Number(event.target.getAttribute('contactid'))
-      console.log(contactID)
       contactService.deleteContact(contactID).then( () =>{
         let a=persons.filter( (person) => (person.id!==contactID))
-        console.log(a)
         setPersons(a)
       })
       
@@ -47,19 +44,33 @@ const App = () => {
   }
   
   const alreadyExist = (name) => {
-    let nameExist=false
+    let already=false
+    let id=0
     persons.forEach( (person) => {
       if (person.name === name){
-        nameExist=true
+        already = true
+        id = person.id
       }
     } )
-    return nameExist
+    if (already){
+      return [true,id]
+    }
+    return [false, null]
   }
 
   const saveContact = (event) => {
     event.preventDefault()
-    if (alreadyExist(newName)){
-      window.alert(`${newName} is already added to phonebook`)
+    let checkName = alreadyExist(newName)
+    if (checkName[0]){
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        contactService.replaceContact(checkName[1],{name:newName, number:newNumber})
+          .then((res)=>{
+            setPersons(persons.filter((person)=>(person.name!==res.name)).concat(res))
+            setNewName('')
+            setNewNumber('')
+            
+          })
+      }
     }
     else{
       contactService.addContact({name:newName, number:newNumber}).then( (res) => {
