@@ -17,6 +17,11 @@ const getAllContacts = () =>{
     return req.then((resp) => resp.data)
   }
 
-  let contactService = {getAllContacts, addContact, deleteContact}
+  const replaceContact = (id,contact) =>{
+    let req = axios.put(baseUrl+`/${id}`,contact)
+    return req.then((resp) => resp.data)
+  }
+
+  let contactService = {getAllContacts, addContact, deleteContact, replaceContact}
 
   export default contactService
