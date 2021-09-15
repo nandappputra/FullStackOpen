@@ -12,12 +12,21 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ searchQuery, setSearchQuery ] = useState('')
 
-  const contactServer = () =>{
-    axios.get('http://localhost:3001/persons')
-      .then((resp) => setPersons(resp.data))
+  const getAllContacts = () =>{
+    let req = axios.get('http://localhost:3001/persons')
+    return req.then((resp) => resp.data)
   }
 
-  useEffect(contactServer,[])
+  const addContact = (contact) =>{
+    let req = axios.post('http://localhost:3001/persons',contact)
+    return req.then((resp) => resp.data)
+  }
+
+  const obtainContact = () => {
+    getAllContacts().then( (res) =>setPersons(res))
+  }
+
+  useEffect(obtainContact,[])
 
   const nameHandler = (event) => {
     setNewName(event.target.value)
@@ -47,7 +56,9 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`)
     }
     else{
-      setPersons(persons.concat({name: newName, number:newNumber}))
+      addContact({name:newName, number:newNumber}).then( (res) => {
+        setPersons(persons.concat(res))
+      })
       setNewName('')
       setNewNumber('')
     }
