@@ -3,15 +3,18 @@ import React, { useState,useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import AlertMessage from './components/AlertMessage'
 
 import contactService from './services/contactService'
 
 const App = () => {
   const [persons, setPersons] = useState([])
 
-  const [ newName, setNewName ] = useState('')
-  const [ newNumber, setNewNumber ] = useState('')
-  const [ searchQuery, setSearchQuery ] = useState('')
+  const [ newName, setNewName ]          = useState('')
+  const [ newNumber, setNewNumber ]      = useState('')
+  const [ searchQuery, setSearchQuery ]  = useState('')
+  const [ alertMessage, setAlertMessage] = useState('')
+  const [ errorMessage, setErrorMessage] = useState(false)
 
 
   const obtainContact = () => {
@@ -68,22 +71,34 @@ const App = () => {
             setPersons(persons.filter((person)=>(person.name!==res.name)).concat(res))
             setNewName('')
             setNewNumber('')
-            
+          })
+          .catch((res)=>{
+            setErrorMessage(true)
+            setAlertMessage(`Information of ${newName} has already been removed from the server`)
+            setTimeout(()=>{
+              setAlertMessage(null)
+              setErrorMessage(false)
+            },5000)
           })
       }
     }
     else{
       contactService.addContact({name:newName, number:newNumber}).then( (res) => {
         setPersons(persons.concat(res))
+        setAlertMessage(`Added ${newName}`)
+        setNewName('')
+        setNewNumber('')
+
+        setTimeout(()=>{setAlertMessage(null)},5000)
+
       })
-      setNewName('')
-      setNewNumber('')
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <AlertMessage message={alertMessage} error={errorMessage} />
       <Filter value={searchQuery} onChange={updateSearch}/>
       <h2>Add a new</h2>
       <PersonForm saveContact={saveContact} newName={newName} nameHandler={nameHandler} newNumber={newNumber} numberHandler={numberHandler} />
