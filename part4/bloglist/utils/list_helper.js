@@ -27,8 +27,42 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce(findBlogWithMaximumLike, {});
 };
 
+const mostBlogs = (blogs) => {
+  if (blogs.length === 0) {
+    return {};
+  }
+
+  const cache = {};
+
+  const recordToCache = (blog) => {
+    if (cache[blog.author] === undefined) {
+      cache[blog.author] = 0;
+    }
+
+    cache[blog.author] += 1;
+  };
+
+  blogs.map(recordToCache);
+
+  let currentMax = 0;
+  let currentMaximumBlogAuthor = "";
+  const allAuthors = Object.keys(cache);
+  allAuthors.map((author) => {
+    if (cache[author] > currentMax) {
+      currentMax = cache[author];
+      currentMaximumBlogAuthor = author;
+    }
+  });
+
+  return {
+    author: currentMaximumBlogAuthor,
+    blogs: currentMax,
+  };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
