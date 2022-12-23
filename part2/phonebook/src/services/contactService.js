@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-let baseUrl = 'http://localhost:3001/persons'
+let baseUrl = '/api/persons'
 
 const getAllContacts = () =>{
     let req = axios.get(baseUrl)
