@@ -60,9 +60,43 @@ const mostBlogs = (blogs) => {
   };
 };
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return {};
+  }
+
+  const cache = {};
+
+  const recordToCache = (blog) => {
+    if (cache[blog.author] === undefined) {
+      cache[blog.author] = 0;
+    }
+
+    cache[blog.author] += blog.likes;
+  };
+
+  blogs.map(recordToCache);
+
+  let currentMax = 0;
+  let currentMaximumLikesAuthor = "";
+  const allAuthors = Object.keys(cache);
+  allAuthors.map((author) => {
+    if (cache[author] > currentMax) {
+      currentMax = cache[author];
+      currentMaximumLikesAuthor = author;
+    }
+  });
+
+  return {
+    author: currentMaximumLikesAuthor,
+    likes: currentMax,
+  };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
