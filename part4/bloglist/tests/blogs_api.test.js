@@ -21,6 +21,7 @@ const initialBlogs = [
 ];
 
 beforeEach(async () => {
+  jest.setTimeout(1000000);
   await Blog.deleteMany({});
   let blogModel = new Blog(initialBlogs[0]);
   await blogModel.save();
@@ -35,19 +36,19 @@ describe("GET /api/blogs", () => {
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
-  }, 15000);
+  }, 150000);
 
   test("all blogs are returned", async () => {
     const response = await api.get("/api/blogs");
 
     expect(response.body).toHaveLength(initialBlogs.length);
-  });
+  }, 150000);
 
   test("the unique identifier of the blog is id", async () => {
     const response = await api.get("/api/blogs");
 
     expect(response.body[0].id).toBeDefined();
-  }, 15000);
+  }, 150000);
 });
 
 describe("POST /api/blogs", () => {
@@ -63,7 +64,19 @@ describe("POST /api/blogs", () => {
 
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(initialBlogs.length + 1);
-  });
+  }, 150000);
+
+  test("when the number of likes missing it will default to 0", async () => {
+    const newBlog = {
+      title: "Newest blog!",
+      author: "Nanda",
+      url: "http://test.test",
+    };
+
+    const response = await api.post("/api/blogs").send(newBlog);
+    console.log(response);
+    expect(response.body.likes).toEqual(0);
+  }, 150000);
 });
 
 afterAll(() => {
