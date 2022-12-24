@@ -34,13 +34,19 @@ test("blogs are returned as json", async () => {
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
-});
+}, 15000);
 
 test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
 
   expect(response.body).toHaveLength(initialBlogs.length);
-});
+}, 15000);
+
+test("the unique identifier of the blog is id", async () => {
+  const response = await api.get("/api/blogs");
+
+  expect(response.body[0].id).toBeDefined();
+}, 15000);
 
 afterAll(() => {
   mongoose.connection.close();
