@@ -29,24 +29,42 @@ beforeEach(async () => {
   await blogModel.save();
 });
 
-test("blogs are returned as json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-}, 15000);
+describe("GET /api/blogs", () => {
+  test("blogs are returned as json", async () => {
+    await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  }, 15000);
 
-test("all blogs are returned", async () => {
-  const response = await api.get("/api/blogs");
+  test("all blogs are returned", async () => {
+    const response = await api.get("/api/blogs");
 
-  expect(response.body).toHaveLength(initialBlogs.length);
-}, 15000);
+    expect(response.body).toHaveLength(initialBlogs.length);
+  });
 
-test("the unique identifier of the blog is id", async () => {
-  const response = await api.get("/api/blogs");
+  test("the unique identifier of the blog is id", async () => {
+    const response = await api.get("/api/blogs");
 
-  expect(response.body[0].id).toBeDefined();
-}, 15000);
+    expect(response.body[0].id).toBeDefined();
+  }, 15000);
+});
+
+describe("POST /api/blogs", () => {
+  test("post add the number of blogs", async () => {
+    const newBlog = {
+      title: "Newest blog!",
+      author: "Nanda",
+      url: "http://test.test",
+      likes: 7,
+    };
+
+    await api.post("/api/blogs").send(newBlog);
+
+    const response = await api.get("/api/blogs");
+    expect(response.body).toHaveLength(initialBlogs.length + 1);
+  });
+});
 
 afterAll(() => {
   mongoose.connection.close();
