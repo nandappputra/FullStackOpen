@@ -98,6 +98,22 @@ describe("DELETE /api/blogs/:id", () => {
   }, 150000);
 });
 
+describe("PUT /api/blogs/:id", () => {
+  test("update existing blog", async () => {
+    const beforeUpdate = await api.get("/api/blogs");
+
+    await api.put(`/api/blogs/${beforeUpdate.body[0].id}`).send({
+      title: "wow",
+    });
+
+    const afterUpdate = await api.get("/api/blogs");
+
+    expect(
+      afterUpdate.body.find((blog) => blog.id === beforeUpdate.body[0].id).title
+    ).toEqual("wow");
+  }, 150000);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
