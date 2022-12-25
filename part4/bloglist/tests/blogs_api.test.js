@@ -74,8 +74,16 @@ describe("POST /api/blogs", () => {
     };
 
     const response = await api.post("/api/blogs").send(newBlog);
-    console.log(response);
     expect(response.body.likes).toEqual(0);
+  }, 150000);
+
+  test("when the title or url is missing it will return 404", async () => {
+    const newBlog = {
+      title: "Cool blog!",
+      author: "Nanda",
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(404);
   }, 150000);
 });
 
