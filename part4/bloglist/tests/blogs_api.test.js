@@ -87,6 +87,17 @@ describe("POST /api/blogs", () => {
   }, 150000);
 });
 
+describe("DELETE /api/blogs/:id", () => {
+  test("delete reduces the number of blogs", async () => {
+    const beforeDeletion = await api.get("/api/blogs");
+
+    await api.delete(`/api/blogs/${beforeDeletion.body[0].id}`);
+
+    const afterDeletion = await api.get("/api/blogs");
+    expect(afterDeletion.body).toHaveLength(initialBlogs.length - 1);
+  }, 150000);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
