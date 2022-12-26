@@ -38,10 +38,40 @@ describe("POST /api/users", () => {
       password: "newest password!",
     };
 
-    await api.post("/api/users").send(newUser);
+    const res = await api.post("/api/users").send(newUser);
 
     const response = await api.get("/api/users");
     expect(response.body.length).toEqual(2);
+  }, 150000);
+
+  test("return error if username is less than 3 characters", async () => {
+    const newUser = {
+      username: "r2",
+      name: "putra",
+      password: "newest password!",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+  }, 150000);
+
+  test("return error if password is less than 3 characters", async () => {
+    const newUser = {
+      username: "r222",
+      name: "putra",
+      password: "!",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+  }, 150000);
+
+  test("return error if username already exist", async () => {
+    const newUser = {
+      username: "user1",
+      name: "putra",
+      password: "!",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
   }, 150000);
 });
 

@@ -7,8 +7,27 @@ usersRouter.get("/", async (request, response) => {
   response.json(users);
 });
 
+const validateRequest = async (username, name, password) => {
+  if (username.length < 3 || password.length < 3) {
+    throw {
+      name: "InvalidUserParameters",
+      message: "Username and password must be atleast 3 characters",
+    };
+  }
+
+  const existingUser = await User.find({ username });
+  if (existingUser && !existingUser.length === 0) {
+    throw {
+      name: "InvalidUserParameters",
+      message: "Username already exist",
+    };
+  }
+};
+
 usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
+
+  await validateRequest(username, name, password);
 
   const passwordHash = await bcrypt.hash(password, 10);
 
