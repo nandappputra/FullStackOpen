@@ -74,6 +74,7 @@ describe("POST /api/blogs", () => {
     };
 
     const response = await api.post("/api/blogs").send(newBlog);
+    expect(response.status).toEqual(201);
     expect(response.body.likes).toEqual(0);
   }, 150000);
 
@@ -84,6 +85,20 @@ describe("POST /api/blogs", () => {
     };
 
     await api.post("/api/blogs").send(newBlog).expect(404);
+  }, 150000);
+
+  test("populates the user field with user", async () => {
+    const newBlog = {
+      title: "Newest blog!",
+      author: "Nanda",
+      url: "http://test.test",
+    };
+
+    const response = await api.post("/api/blogs").send(newBlog);
+
+    console.log(response);
+    expect(response.status).toEqual(201);
+    expect(response.body.user).toBeDefined();
   }, 150000);
 });
 

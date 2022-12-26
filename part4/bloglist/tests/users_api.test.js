@@ -28,6 +28,13 @@ describe("GET /api/users", () => {
     expect(response.status).toEqual(200);
     expect(response.body.length).toEqual(1);
   }, 150000);
+
+  test("populates the blogs with list of blogs", async () => {
+    const response = await api.get("/api/users");
+
+    expect(response.status).toEqual(200);
+    expect(response.body[0].blogs).toBeDefined();
+  }, 150000);
 });
 
 describe("POST /api/users", () => {
