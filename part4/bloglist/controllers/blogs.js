@@ -46,9 +46,20 @@ blogsRouter.post("/", async (request, response) => {
 blogsRouter.delete("/:id", async (request, response) => {
   const blogToDeleteId = request.params.id;
 
+  const blog = await Blog.findById(blogToDeleteId);
+  const decodedToken = jwt.verify(request.token, config.SECRET);
+
+  if (blog === null) {
+    return response.status(404).json({ error: "blog not found" });
+  }
+
+  if (blog.user.toString() !== decodedToken.id) {
+    return response.status(401).json({ error: "Unauthorized" });
+  }
+
   await Blog.deleteOne({ _id: blogToDeleteId });
 
-  response.status(201).end();
+  return response.status(201).end();
 });
 
 blogsRouter.put("/:id", async (request, response) => {

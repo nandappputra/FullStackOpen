@@ -12,3 +12,8 @@ Authorization: bearer XXXXXXXX
     "url": "hehe.hehe",
     "likes": 20
 }
+
+###
+
+DELETE http://localhost:3001/api/blogs/63a953e2309d983f755eef8d HTTP/1.1
+Authorization: bearer XXXXXXXX
