@@ -2,8 +2,33 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const { Blog } = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
+
+let newUser;
+let token;
+
+const setupUser = async (username, name, password) => {
+  await User.deleteMany({});
+  const res = await api.post("/api/users").send({
+    username,
+    name,
+    password,
+  });
+  return res.body._id;
+};
+
+const obtainToken = async (username, password) => {
+  const response = await api.post("/api/login").send({ username, password });
+  return response.body.token;
+};
+
+beforeAll(async () => {
+  newUser = await setupUser("test1", "testing", "test123");
+
+  token = await obtainToken("test1", "test123");
+});
 
 const initialBlogs = [
   {
@@ -11,22 +36,30 @@ const initialBlogs = [
     author: "Edsger W. Dijkstra",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
     likes: 5,
+    user: mongoose.Types.ObjectId(newUser),
   },
   {
     title: "hehe",
     author: "me",
     url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
     likes: 3,
+    user: mongoose.Types.ObjectId(newUser),
   },
 ];
 
 beforeEach(async () => {
   jest.setTimeout(1000000);
   await Blog.deleteMany({});
-  let blogModel = new Blog(initialBlogs[0]);
-  await blogModel.save();
+  let blogModel = new Blog({
+    ...initialBlogs[0],
+    user: mongoose.Types.ObjectId(newUser),
+  });
+  const res1 = await blogModel.save();
 
-  blogModel = new Blog(initialBlogs[1]);
+  blogModel = new Blog({
+    ...initialBlogs[1],
+    user: mongoose.Types.ObjectId(newUser),
+  });
   await blogModel.save();
 });
 
@@ -60,7 +93,12 @@ describe("POST /api/blogs", () => {
       likes: 7,
     };
 
-    await api.post("/api/blogs").send(newBlog);
+    await api
+      .post("/api/blogs")
+      .set({
+        authorization: `bearer ${token}`,
+      })
+      .send(newBlog);
 
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(initialBlogs.length + 1);
@@ -73,7 +111,12 @@ describe("POST /api/blogs", () => {
       url: "http://test.test",
     };
 
-    const response = await api.post("/api/blogs").send(newBlog);
+    const response = await api
+      .post("/api/blogs")
+      .set({
+        authorization: `bearer ${token}`,
+      })
+      .send(newBlog);
     expect(response.status).toEqual(201);
     expect(response.body.likes).toEqual(0);
   }, 150000);
@@ -84,7 +127,13 @@ describe("POST /api/blogs", () => {
       author: "Nanda",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(404);
+    await api
+      .post("/api/blogs")
+      .set({
+        authorization: `bearer ${token}`,
+      })
+      .send(newBlog)
+      .expect(404);
   }, 150000);
 
   test("populates the user field with user", async () => {
@@ -94,9 +143,13 @@ describe("POST /api/blogs", () => {
       url: "http://test.test",
     };
 
-    const response = await api.post("/api/blogs").send(newBlog);
+    const response = await api
+      .post("/api/blogs")
+      .set({
+        authorization: `bearer ${token}`,
+      })
+      .send(newBlog);
 
-    console.log(response);
     expect(response.status).toEqual(201);
     expect(response.body.user).toBeDefined();
   }, 150000);
@@ -106,7 +159,11 @@ describe("DELETE /api/blogs/:id", () => {
   test("delete reduces the number of blogs", async () => {
     const beforeDeletion = await api.get("/api/blogs");
 
-    await api.delete(`/api/blogs/${beforeDeletion.body[0].id}`);
+    const res = await api
+      .delete(`/api/blogs/${beforeDeletion.body[0].id}`)
+      .set({
+        authorization: `bearer ${token}`,
+      });
 
     const afterDeletion = await api.get("/api/blogs");
     expect(afterDeletion.body).toHaveLength(initialBlogs.length - 1);

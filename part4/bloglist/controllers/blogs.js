@@ -1,7 +1,5 @@
 const blogsRouter = require("express").Router();
 const { Blog } = require("../models/blog");
-const jwt = require("jsonwebtoken");
-const config = require("../utils/config");
 const middleware = require("../utils/middleware");
 
 blogsRouter.get("/", async (request, response) => {
@@ -48,7 +46,7 @@ blogsRouter.delete(
       return response.status(404).json({ error: "blog not found" });
     }
 
-    if (blog.user.toString() !== request.user._id.toString()) {
+    if (blog.user._id.toString() !== request.user._id.toString()) {
       return response.status(401).json({ error: "Unauthorized" });
     }
 
