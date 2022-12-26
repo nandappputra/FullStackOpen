@@ -1,3 +1,12 @@
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    request.token = authorization.substring(7);
+  }
+
+  next();
+};
+
 const errorHandler = (error, request, response, next) => {
   if (error.name === "MissingURLOrTitle") {
     return response.status(404).json({ error: error.message });
@@ -10,4 +19,4 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
-module.exports = { errorHandler };
+module.exports = { tokenExtractor, errorHandler };
