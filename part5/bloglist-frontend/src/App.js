@@ -12,6 +12,8 @@ const App = () => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
+  const [notification, setNotification] = useState("");
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -29,12 +31,18 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const loginInfo = await loginService.login({ username, password });
-    window.localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
-    blogService.setToken(loginInfo.token);
-    setUser(loginInfo);
-    setUsername("");
-    setPassword("");
+    try {
+      const loginInfo = await loginService.login({ username, password });
+      window.localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
+      blogService.setToken(loginInfo.token);
+      setUser(loginInfo);
+      setUsername("");
+      setPassword("");
+    } catch (error) {
+      setNotification(error.response.data.error);
+
+      setTimeout(() => setNotification(""), 5000);
+    }
   };
 
   const handleLogout = () => {
@@ -52,12 +60,32 @@ const App = () => {
       url,
     };
 
-    const response = await blogService.createNewBlog(newBlog);
+    try {
+      const response = await blogService.createNewBlog(newBlog);
 
-    setBlogs([...blogs, response]);
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+      setBlogs([...blogs, response]);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+
+      setNotification(`New blog added: ${title}`);
+
+      setTimeout(() => setNotification(""), 5000);
+    } catch (error) {
+      setNotification(error.response.data.error);
+
+      setTimeout(() => setNotification(""), 5000);
+    }
+  };
+
+  const notificationMessage = () => {
+    return notification === "" ? (
+      <div></div>
+    ) : (
+      <div>
+        <p>{notification}</p>
+      </div>
+    );
   };
 
   const loginForm = () => {
@@ -140,6 +168,7 @@ const App = () => {
 
   return (
     <div>
+      {notificationMessage()}
       {user === null ? (
         loginForm()
       ) : (
