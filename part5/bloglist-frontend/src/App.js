@@ -32,6 +32,12 @@ const App = () => {
     setPassword("");
   };
 
+  const handleLogout = () => {
+    window.localStorage.removeItem("loginInfo");
+    blogService.setToken(null);
+    setUser(null);
+  };
+
   const loginForm = () => {
     return (
       <>
@@ -65,6 +71,9 @@ const App = () => {
     return (
       <>
         <p>User {user.name} is logged in</p>
+        <button type="button" onClick={handleLogout}>
+          logout
+        </button>
       </>
     );
   };

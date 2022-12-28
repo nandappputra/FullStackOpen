@@ -4,7 +4,7 @@ const baseUrl = "/api/blogs";
 let token = null;
 
 const setToken = (jwtToken) => {
-  token = `bearer ${token}`;
+  token = `bearer ${jwtToken}`;
 };
 
 const getAll = () => {
