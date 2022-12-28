@@ -9,7 +9,20 @@ const setToken = (jwtToken) => {
 
 const getAll = () => {
   const request = axios.get(baseUrl);
+
   return request.then((response) => response.data);
 };
 
-export default { getAll, setToken };
+const createNewBlog = async (blog) => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+
+  const response = await axios.post(baseUrl, blog, config);
+
+  return response.data;
+};
+
+export default { getAll, setToken, createNewBlog };

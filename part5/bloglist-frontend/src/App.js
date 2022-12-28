@@ -7,6 +7,11 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -18,7 +23,7 @@ const App = () => {
     if (loginInfo) {
       const loggedInUser = JSON.parse(loginInfo);
       setUser(loggedInUser);
-      blogService.setToken(loginInfo.token);
+      blogService.setToken(loggedInUser.token);
     }
   }, []);
 
@@ -36,6 +41,23 @@ const App = () => {
     window.localStorage.removeItem("loginInfo");
     blogService.setToken(null);
     setUser(null);
+  };
+
+  const handleNewBlog = async (event) => {
+    event.preventDefault();
+
+    const newBlog = {
+      title,
+      author,
+      url,
+    };
+
+    const response = await blogService.createNewBlog(newBlog);
+
+    setBlogs([...blogs, response]);
+    setTitle("");
+    setAuthor("");
+    setUrl("");
   };
 
   const loginForm = () => {
@@ -78,6 +100,44 @@ const App = () => {
     );
   };
 
+  const createNewBlog = () => {
+    return (
+      <>
+        <h2>create new</h2>
+        <form onSubmit={handleNewBlog}>
+          <div>
+            title
+            <input
+              type="text"
+              value={title}
+              name="title"
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            author
+            <input
+              type="text"
+              value={author}
+              name="author"
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            url
+            <input
+              type="text"
+              value={url}
+              name="url"
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <button type="submit">create</button>
+        </form>
+      </>
+    );
+  };
+
   return (
     <div>
       {user === null ? (
@@ -86,6 +146,7 @@ const App = () => {
         <>
           {userInfo()}
           <h2>blogs</h2>
+          {createNewBlog()}
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
