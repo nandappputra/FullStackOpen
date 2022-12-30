@@ -24,9 +24,10 @@ const Blog = ({ blog }) => {
 
   const handleLike = async () => {
     setNumberOfLikes(numberOfLikes + 1);
-    blog = { ...blog, likes: numberOfLikes + 1 };
 
-    await blogService.likeBlog(blog);
+    const likedBlog = { ...blog, likes: numberOfLikes + 1 };
+
+    await blogService.likeBlog(likedBlog);
   };
 
   const blogDetail = () => {
