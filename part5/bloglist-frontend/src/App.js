@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
+import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -9,13 +10,11 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
-
   const [notification, setNotification] = useState("");
 
   const [user, setUser] = useState(null);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -52,29 +51,17 @@ const App = () => {
     setUser(null);
   };
 
-  const handleNewBlog = async (event) => {
-    event.preventDefault();
-
-    const newBlog = {
-      title,
-      author,
-      url,
-    };
-
+  const handleNewBlog = async (newBlog) => {
     try {
       const response = await blogService.createNewBlog(newBlog);
 
       setBlogs([...blogs, response]);
-      setTitle("");
-      setAuthor("");
-      setUrl("");
+      blogFormRef.current.changeVisibility();
 
-      setNotification(`New blog added: ${title}`);
-
+      setNotification(`New blog added: ${newBlog.title}`);
       setTimeout(() => setNotification(""), 5000);
     } catch (error) {
       setNotification(error.response.data.error);
-
       setTimeout(() => setNotification(""), 5000);
     }
   };
@@ -129,44 +116,6 @@ const App = () => {
     );
   };
 
-  const createNewBlog = () => {
-    return (
-      <>
-        <h2>create new</h2>
-        <form onSubmit={handleNewBlog}>
-          <div>
-            title
-            <input
-              type="text"
-              value={title}
-              name="title"
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            author
-            <input
-              type="text"
-              value={author}
-              name="author"
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            url
-            <input
-              type="text"
-              value={url}
-              name="url"
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-          <button type="submit">create</button>
-        </form>
-      </>
-    );
-  };
-
   return (
     <div>
       {notificationMessage()}
@@ -176,8 +125,8 @@ const App = () => {
         <>
           {userInfo()}
           <h2>blogs</h2>
-          <Togglable showButton="new note" hideButton="hide">
-            {createNewBlog()}
+          <Togglable showButton="new note" hideButton="hide" ref={blogFormRef}>
+            <BlogForm newBlogHandler={handleNewBlog} />
           </Togglable>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
