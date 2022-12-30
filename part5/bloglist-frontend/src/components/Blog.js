@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, removeBlogFromList }) => {
   const blogStyle = {
     backgroundColor: "lightgrey",
     borderRadius: "0.5em",
@@ -30,6 +30,13 @@ const Blog = ({ blog }) => {
     await blogService.likeBlog(likedBlog);
   };
 
+  const handleDelete = async () => {
+    if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
+      await blogService.deleteBlog(blog);
+      removeBlogFromList(blog);
+    }
+  };
+
   const blogDetail = () => {
     return (
       <div>
@@ -44,6 +51,14 @@ const Blog = ({ blog }) => {
     );
   };
 
+  const deleteBlog = () => {
+    return (
+      <button type="button" onClick={handleDelete}>
+        delete
+      </button>
+    );
+  };
+
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author}
@@ -51,6 +66,7 @@ const Blog = ({ blog }) => {
         {buttonText}
       </button>
       {detailVisible && blogDetail()}
+      {detailVisible && deleteBlog()}
     </div>
   );
 };

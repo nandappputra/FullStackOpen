@@ -116,6 +116,12 @@ const App = () => {
     );
   };
 
+  const removeBlogFromList = (blogToDelete) => {
+    const id = blogToDelete.id;
+    setBlogs(blogs.filter((blog) => blog.id !== id));
+    console.log("blogs");
+  };
+
   return (
     <div>
       {notificationMessage()}
@@ -131,7 +137,11 @@ const App = () => {
           {blogs
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
-              <Blog key={blog.id} blog={blog} />
+              <Blog
+                key={blog.id}
+                blog={blog}
+                removeBlogFromList={removeBlogFromList}
+              />
             ))}
         </>
       )}
