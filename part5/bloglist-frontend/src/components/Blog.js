@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import blogService from "../services/blogs";
 
@@ -12,6 +13,11 @@ const Blog = ({ blog, removeBlogFromList }) => {
   const [buttonText, setButtonText] = useState("view");
 
   const [numberOfLikes, setNumberOfLikes] = useState(blog.likes);
+
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    removeBlogFromList: PropTypes.func.isRequired,
+  };
 
   const toggleDetail = () => {
     if (detailVisible) {
