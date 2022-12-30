@@ -1,4 +1,5 @@
 import { useState } from "react";
+import blogService from "../services/blogs";
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -10,6 +11,8 @@ const Blog = ({ blog }) => {
   const [detailVisible, setDetailVisibility] = useState(false);
   const [buttonText, setButtonText] = useState("view");
 
+  const [numberOfLikes, setNumberOfLikes] = useState(blog.likes);
+
   const toggleDetail = () => {
     if (detailVisible) {
       setButtonText("view");
@@ -19,11 +22,21 @@ const Blog = ({ blog }) => {
     setDetailVisibility(!detailVisible);
   };
 
+  const handleLike = async () => {
+    setNumberOfLikes(numberOfLikes + 1);
+    blog = { ...blog, likes: numberOfLikes + 1 };
+
+    await blogService.likeBlog(blog);
+  };
+
   const blogDetail = () => {
     return (
       <div>
         {blog.url} <br />
-        {blog.likes} <button>like</button>
+        {numberOfLikes}{" "}
+        <button type="button" onClick={handleLike}>
+          like
+        </button>
         <br />
         {blog.name}
       </div>
