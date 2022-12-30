@@ -66,7 +66,7 @@ const Blog = ({ blog, removeBlogFromList }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {blog.title} {blog.author}
       <button type="button" onClick={toggleDetail}>
         {buttonText}
