@@ -13,10 +13,15 @@ describe("Blog", () => {
       url: "hehehe.com",
     };
 
+    const mockLikeBlock = jest.fn();
     const mockRemoveBlogFromList = jest.fn();
 
     const { container } = render(
-      <Blog blog={blog} removeBlogFromList={mockRemoveBlogFromList} />
+      <Blog
+        blog={blog}
+        likeBlog={mockLikeBlock}
+        removeBlogFromList={mockRemoveBlogFromList}
+      />
     );
 
     const element = container.querySelector(".blog");
@@ -35,10 +40,15 @@ describe("Blog", () => {
       url: "hehehe.com",
     };
 
+    const mockLikeBlock = jest.fn();
     const mockRemoveBlogFromList = jest.fn();
 
     const { container } = render(
-      <Blog blog={blog} removeBlogFromList={mockRemoveBlogFromList} />
+      <Blog
+        blog={blog}
+        likeBlog={mockLikeBlock}
+        removeBlogFromList={mockRemoveBlogFromList}
+      />
     );
 
     const user = userEvent.setup();
@@ -51,5 +61,35 @@ describe("Blog", () => {
     expect(element.textContent).toContain("me");
     expect(element.textContent).toContain("30");
     expect(element.textContent).toContain("hehehe.com");
+  });
+
+  test("should send every like button click to backend", async () => {
+    const blog = {
+      title: "testing",
+      author: "me",
+      likes: 30,
+      url: "hehehe.com",
+    };
+
+    const mockLikeBlock = jest.fn();
+    const mockRemoveBlogFromList = jest.fn();
+
+    const { container } = render(
+      <Blog
+        blog={blog}
+        likeBlog={mockLikeBlock}
+        removeBlogFromList={mockRemoveBlogFromList}
+      />
+    );
+
+    const user = userEvent.setup();
+    const button = screen.getByText("view");
+    await user.click(button);
+
+    const likeButton = screen.getByText("like");
+    await user.click(likeButton);
+    await user.click(likeButton);
+
+    expect(mockLikeBlock.mock.calls).toHaveLength(2);
   });
 });

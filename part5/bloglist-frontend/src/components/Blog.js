@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import blogService from "../services/blogs";
 
-const Blog = ({ blog, removeBlogFromList }) => {
+const Blog = ({ blog, likeBlog, removeBlogFromList }) => {
   const blogStyle = {
     backgroundColor: "lightgrey",
     borderRadius: "0.5em",
@@ -16,6 +15,7 @@ const Blog = ({ blog, removeBlogFromList }) => {
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
+    likeBlog: PropTypes.func.isRequired,
     removeBlogFromList: PropTypes.func.isRequired,
   };
 
@@ -30,15 +30,12 @@ const Blog = ({ blog, removeBlogFromList }) => {
 
   const handleLike = async () => {
     setNumberOfLikes(numberOfLikes + 1);
-
     const likedBlog = { ...blog, likes: numberOfLikes + 1 };
-
-    await blogService.likeBlog(likedBlog);
+    likeBlog(likedBlog);
   };
 
   const handleDelete = async () => {
     if (window.confirm(`Remove blog "${blog.title}" by ${blog.author}?`)) {
-      await blogService.deleteBlog(blog);
       removeBlogFromList(blog);
     }
   };

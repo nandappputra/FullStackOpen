@@ -116,10 +116,14 @@ const App = () => {
     );
   };
 
-  const removeBlogFromList = (blogToDelete) => {
+  const likeBlog = async (blogToLike) => {
+    await blogService.likeBlog(blogToLike);
+  };
+
+  const removeBlogFromList = async (blogToDelete) => {
+    await blogService.deleteBlog(blogToDelete);
     const id = blogToDelete.id;
     setBlogs(blogs.filter((blog) => blog.id !== id));
-    console.log("blogs");
   };
 
   return (
@@ -140,6 +144,7 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
+                likeBlog={likeBlog}
                 removeBlogFromList={removeBlogFromList}
               />
             ))}
