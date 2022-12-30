@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -175,7 +176,9 @@ const App = () => {
         <>
           {userInfo()}
           <h2>blogs</h2>
-          {createNewBlog()}
+          <Togglable showButton="new note" hideButton="hide">
+            {createNewBlog()}
+          </Togglable>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
