@@ -45,7 +45,7 @@ const Blog = ({ blog, likeBlog, removeBlogFromList }) => {
       <div>
         {blog.url} <br />
         {numberOfLikes}{" "}
-        <button type="button" onClick={handleLike}>
+        <button type="button" onClick={handleLike} className="blog">
           like
         </button>
         <br />
