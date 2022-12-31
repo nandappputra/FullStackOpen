@@ -139,7 +139,7 @@ const App = () => {
         <>
           {userInfo()}
           <h2>blogs</h2>
-          <Togglable showButton="new note" hideButton="hide" ref={blogFormRef}>
+          <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
             <BlogForm newBlogHandler={handleNewBlog} />
           </Togglable>
           {blogs

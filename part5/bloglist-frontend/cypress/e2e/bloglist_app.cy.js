@@ -28,4 +28,24 @@ describe("Blog app", function () {
       cy.contains("wrong username or password");
     });
   });
+
+  describe("When logged in", function () {
+    beforeEach(function () {
+      cy.login({ username: "testing", password: "123" });
+
+      cy.visit("http://localhost:3000");
+    });
+
+    it("A blog can be created", function () {
+      cy.get("#mark-as-visible").click();
+
+      cy.get("#blog-title").type("testing");
+      cy.get("#blog-author").type("testing");
+      cy.get("#blog-url").type("testing");
+
+      cy.get("#blog-submit").click();
+
+      cy.contains("New blog added: testing");
+    });
+  });
 });

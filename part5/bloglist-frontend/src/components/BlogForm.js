@@ -6,7 +6,6 @@ const BlogForm = (props) => {
   const [url, setUrl] = useState("");
 
   const handleNewBlog = async (event) => {
-    console.log("WOW THIS IS HIT");
     event.preventDefault();
     props.newBlogHandler({ title, author, url });
 
@@ -27,6 +26,7 @@ const BlogForm = (props) => {
             name="title"
             onChange={({ target }) => setTitle(target.value)}
             placeholder="title of the blog"
+            id="blog-title"
           />
         </div>
         <div>
@@ -37,6 +37,7 @@ const BlogForm = (props) => {
             name="author"
             onChange={({ target }) => setAuthor(target.value)}
             placeholder="name of the author"
+            id="blog-author"
           />
         </div>
         <div>
@@ -47,9 +48,12 @@ const BlogForm = (props) => {
             name="url"
             onChange={({ target }) => setUrl(target.value)}
             placeholder="url of the blog"
+            id="blog-url"
           />
         </div>
-        <button type="submit">create</button>
+        <button type="submit" id="blog-submit">
+          create
+        </button>
       </form>
     </>
   );
