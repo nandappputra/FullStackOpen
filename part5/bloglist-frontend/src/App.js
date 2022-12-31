@@ -122,6 +122,8 @@ const App = () => {
 
   const likeBlog = async (blogToLike) => {
     await blogService.likeBlog(blogToLike);
+    const updatedBlog = blogs.filter((blog) => blog.id !== blogToLike.id);
+    setBlogs([...updatedBlog, blogToLike]);
   };
 
   const removeBlogFromList = async (blogToDelete) => {

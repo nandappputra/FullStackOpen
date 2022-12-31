@@ -77,5 +77,34 @@ describe("Blog app", function () {
 
       cy.get(".blog").should("not.exist");
     });
+
+    it("Display the blogs ordered by the number of likes", function () {
+      cy.get("#mark-as-visible").click();
+      cy.get("#blog-title").type("testing blog");
+      cy.get("#blog-author").type("testing");
+      cy.get("#blog-url").type("testing");
+      cy.get("#blog-submit").click();
+
+      cy.contains("view").click();
+
+      cy.get("#mark-as-visible").click();
+
+      cy.get("#blog-title").type("testing blog 2");
+      cy.get("#blog-author").type("testing");
+      cy.get("#blog-url").type("testing");
+
+      cy.get("#blog-submit").click();
+      cy.contains("testing blog 2 testing").as("SecondBlog");
+      cy.get("@SecondBlog").contains("view").click();
+      cy.get("@SecondBlog").contains("like").click();
+      cy.get("@SecondBlog").contains("like").click();
+
+      cy.get(".blog")
+        .eq(0)
+        .should(
+          "to.have.text",
+          "testing blog 2 testinghidetesting 2 likedelete"
+        );
+    });
   });
 });
