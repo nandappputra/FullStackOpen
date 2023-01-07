@@ -28,7 +28,7 @@ const reducer = (state = initialState, action) => {
             ? { ...anecdote, votes: anecdote.votes + 1 }
             : anecdote
         ),
-      ];
+      ].sort((a, b) => b.votes - a.votes);
 
     case "NEW":
       return state.concat(action.data);
