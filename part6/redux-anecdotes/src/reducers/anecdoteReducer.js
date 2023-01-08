@@ -16,7 +16,6 @@ const anecdoteReducer = (state = initialState, action) => {
       ].sort((a, b) => b.votes - a.votes);
 
     case "NEW":
-      anecdoteService.save(action.data);
       return state.concat(action.data);
 
     case "SET":
@@ -56,6 +55,14 @@ export const initializeAnecdotes = () => {
   return async (dispatch) => {
     const anecdotes = await anecdoteService.getAll();
     dispatch(setAnecdote(anecdotes));
+  };
+};
+
+export const addAnecdoteToList = (content) => {
+  return async (dispatch) => {
+    const anecdote = { content, id: getId(), votes: 0 };
+    await anecdoteService.save(anecdote);
+    dispatch(addAnecdote(content));
   };
 };
 
