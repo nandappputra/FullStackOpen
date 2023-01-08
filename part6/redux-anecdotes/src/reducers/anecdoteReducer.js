@@ -52,4 +52,11 @@ export const setAnecdote = (anecdotes) => {
   };
 };
 
+export const initializeAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await anecdoteService.getAll();
+    dispatch(setAnecdote(anecdotes));
+  };
+};
+
 export default anecdoteReducer;
