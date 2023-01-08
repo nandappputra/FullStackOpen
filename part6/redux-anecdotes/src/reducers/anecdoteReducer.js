@@ -1,3 +1,5 @@
+import anecdoteService from "../services/anecdotes";
+
 const getId = () => (100000 * Math.random()).toFixed(0);
 
 const initialState = [];
@@ -14,6 +16,7 @@ const anecdoteReducer = (state = initialState, action) => {
       ].sort((a, b) => b.votes - a.votes);
 
     case "NEW":
+      anecdoteService.save(action.data);
       return state.concat(action.data);
 
     case "SET":
@@ -44,7 +47,7 @@ export const addAnecdote = (content) => {
 
 export const setAnecdote = (anecdotes) => {
   return {
-    type: "NEW",
+    type: "SET",
     data: anecdotes,
   };
 };
