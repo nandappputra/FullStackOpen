@@ -12,9 +12,15 @@ const save = async (data) => {
   return response.data;
 };
 
+const vote = async (data) => {
+  const response = await axios.put(`${baseUrl}/${data.id}`, data);
+  return response.data;
+};
+
 const anecdoteService = {
   getAll,
   save,
+  vote,
 };
 
 export default anecdoteService;

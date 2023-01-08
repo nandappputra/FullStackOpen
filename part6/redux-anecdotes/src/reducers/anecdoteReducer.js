@@ -54,7 +54,7 @@ export const setAnecdote = (anecdotes) => {
 export const initializeAnecdotes = () => {
   return async (dispatch) => {
     const anecdotes = await anecdoteService.getAll();
-    dispatch(setAnecdote(anecdotes));
+    dispatch(setAnecdote(anecdotes.sort((a, b) => b.votes - a.votes)));
   };
 };
 
@@ -63,6 +63,13 @@ export const addAnecdoteToList = (content) => {
     const anecdote = { content, id: getId(), votes: 0 };
     await anecdoteService.save(anecdote);
     dispatch(addAnecdote(content));
+  };
+};
+
+export const addVote = (anecdote) => {
+  return async (dispatch) => {
+    await anecdoteService.vote({ ...anecdote, votes: anecdote.votes + 1 });
+    dispatch(voteAnecdote(anecdote.id));
   };
 };
 
