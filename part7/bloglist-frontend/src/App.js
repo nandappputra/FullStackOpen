@@ -9,7 +9,7 @@ import {
   setNotification,
   clearNotification,
 } from "./reducers/notificationReducer";
-import { setBlog, addBlog } from "./reducers/blogReducer";
+import { setBlog, addBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
 import Notification from "./components/Notification";
 
 const App = () => {
@@ -120,17 +120,15 @@ const App = () => {
     );
   };
 
-  // const likeBlog = async (blogToLike) => {
-  //   await blogService.likeBlog(blogToLike);
-  //   const updatedBlog = blogs.filter((blog) => blog.id !== blogToLike.id);
-  //   setBlogs([...updatedBlog, blogToLike]);
-  // };
+  const sendLikeToBlog = async (blogToLike) => {
+    await blogService.likeBlog(blogToLike);
+    dispatch(likeBlog(blogToLike.id));
+  };
 
-  // const removeBlogFromList = async (blogToDelete) => {
-  //   await blogService.deleteBlog(blogToDelete);
-  //   const id = blogToDelete.id;
-  //   setBlogs(blogs.filter((blog) => blog.id !== id));
-  // };
+  const removeBlogFromList = async (blogToDelete) => {
+    await blogService.deleteBlog(blogToDelete);
+    dispatch(deleteBlog(blogToDelete.id));
+  };
 
   return (
     <div>
@@ -150,8 +148,8 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                // likeBlog={likeBlog}
-                // removeBlogFromList={removeBlogFromList}
+                likeBlog={sendLikeToBlog}
+                removeBlogFromList={removeBlogFromList}
               />
             ))}
         </>
