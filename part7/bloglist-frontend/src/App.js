@@ -121,7 +121,7 @@ const App = () => {
   const userInfo = () => {
     return (
       <>
-        <p>User {auth.name} is logged in</p>
+        {auth.name} is logged in{" "}
         <button type="button" onClick={handleLogout}>
           logout
         </button>
@@ -139,10 +139,15 @@ const App = () => {
     dispatch(deleteBlog(blogToDelete.id));
   };
 
-  const BlogHeader = () => {
+  const NavigationBar = () => {
     return (
       <div>
-        <h2>blogs</h2>
+        <Link style={padded} to="/">
+          Home
+        </Link>
+        <Link style={padded} to="/users">
+          Users
+        </Link>
         {userInfo()}
       </div>
     );
@@ -253,16 +258,8 @@ const App = () => {
         loginForm()
       ) : (
         <>
-          <div>
-            <Link style={padded} to="/">
-              Home
-            </Link>
-            <Link style={padded} to="/users">
-              Users
-            </Link>
-          </div>
-
-          <BlogHeader />
+          <NavigationBar />
+          <h2>blogs</h2>
 
           <Routes>
             <Route path="/" element={<BlogList />} />
