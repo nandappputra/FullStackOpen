@@ -10,6 +10,9 @@ const blogSlice = createSlice({
     addBlog(state, action) {
       return state.concat(action.payload);
     },
+    commentBlog(state, action) {
+      return { ...state, comments: [...state.comments, action.payload] };
+    },
     likeBlog(state, action) {
       const blogId = action.payload;
       const blogToLike = state.find((blog) => blog.id === blogId);
@@ -23,6 +26,7 @@ const blogSlice = createSlice({
   },
 });
 
-export const { setBlog, addBlog, likeBlog, deleteBlog } = blogSlice.actions;
+export const { setBlog, addBlog, commentBlog, likeBlog, deleteBlog } =
+  blogSlice.actions;
 
 export default blogSlice.reducer;

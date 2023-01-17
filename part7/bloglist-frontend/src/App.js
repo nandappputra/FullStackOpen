@@ -243,6 +243,10 @@ const App = () => {
           </button>
         </p>
         <p>added by {blog.author}</p>
+        <h3>comments</h3>
+        {blog.comments.map((comment, idx) => (
+          <li key={idx}>{comment}</li>
+        ))}
       </div>
     );
   };
