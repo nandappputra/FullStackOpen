@@ -4,17 +4,18 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setNotification,
   clearNotification,
 } from "./reducers/notificationReducer";
+import { setBlog, addBlog } from "./reducers/blogReducer";
 import Notification from "./components/Notification";
 
 const App = () => {
   const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogs);
 
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,7 +24,9 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogData) => {
+      dispatch(setBlog(blogData));
+    });
   }, []);
 
   useEffect(() => {
@@ -61,7 +64,7 @@ const App = () => {
     try {
       const response = await blogService.createNewBlog(newBlog);
 
-      setBlogs([...blogs, response]);
+      dispatch(addBlog(response));
       blogFormRef.current.changeVisibility();
 
       dispatch(setNotification(`New blog added: ${newBlog.title}`));
@@ -117,17 +120,17 @@ const App = () => {
     );
   };
 
-  const likeBlog = async (blogToLike) => {
-    await blogService.likeBlog(blogToLike);
-    const updatedBlog = blogs.filter((blog) => blog.id !== blogToLike.id);
-    setBlogs([...updatedBlog, blogToLike]);
-  };
+  // const likeBlog = async (blogToLike) => {
+  //   await blogService.likeBlog(blogToLike);
+  //   const updatedBlog = blogs.filter((blog) => blog.id !== blogToLike.id);
+  //   setBlogs([...updatedBlog, blogToLike]);
+  // };
 
-  const removeBlogFromList = async (blogToDelete) => {
-    await blogService.deleteBlog(blogToDelete);
-    const id = blogToDelete.id;
-    setBlogs(blogs.filter((blog) => blog.id !== id));
-  };
+  // const removeBlogFromList = async (blogToDelete) => {
+  //   await blogService.deleteBlog(blogToDelete);
+  //   const id = blogToDelete.id;
+  //   setBlogs(blogs.filter((blog) => blog.id !== id));
+  // };
 
   return (
     <div>
@@ -141,14 +144,14 @@ const App = () => {
           <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
             <BlogForm newBlogHandler={handleNewBlog} />
           </Togglable>
-          {blogs
+          {[...blogs]
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
               <Blog
                 key={blog.id}
                 blog={blog}
-                likeBlog={likeBlog}
-                removeBlogFromList={removeBlogFromList}
+                // likeBlog={likeBlog}
+                // removeBlogFromList={removeBlogFromList}
               />
             ))}
         </>
