@@ -80,7 +80,6 @@ const App = () => {
       dispatch(setNotification(`New blog added: ${newBlog.title}`));
       setTimeout(() => dispatch(clearNotification()), 5000);
     } catch (error) {
-      console.log(error);
       dispatch(setNotification(error.response.data.error));
       setTimeout(() => dispatch(clearNotification()), 5000);
     }
@@ -208,8 +207,37 @@ const App = () => {
         <h1>{user.name}</h1>
         <h2>Added blogs</h2>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </li>
         ))}
+      </div>
+    );
+  };
+
+  const BlogDetail = () => {
+    const id = useParams().id;
+    const blog = blogs.find((data) => data.id === id);
+
+    if (!blog) {
+      return null;
+    }
+
+    return (
+      <div>
+        <h1>{blog.title}</h1>
+        <a href={blog.url}>{blog.url}</a>
+        <p>
+          {blog.likes} likes{" "}
+          <button
+            onClick={() => {
+              sendLikeToBlog({ ...blog, likes: blog.likes + 1 });
+            }}
+          >
+            like
+          </button>
+        </p>
+        <p>added by {blog.author}</p>
       </div>
     );
   };
@@ -240,6 +268,7 @@ const App = () => {
             <Route path="/" element={<BlogList />} />
             <Route path="/users" element={<Users />} />
             <Route path="/users/:id" element={<UserDetail />} />
+            <Route path="/blogs/:id" element={<BlogDetail />} />
           </Routes>
         </>
       )}

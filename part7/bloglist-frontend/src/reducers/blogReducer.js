@@ -15,7 +15,7 @@ const blogSlice = createSlice({
       const blogToLike = state.find((blog) => blog.id === blogId);
       const filteredBlog = state.filter((blog) => blog.id !== blogId);
 
-      return [...filteredBlog, { ...blogToLike, like: blogToLike.like + 1 }];
+      return [...filteredBlog, { ...blogToLike, likes: blogToLike.likes + 1 }];
     },
     deleteBlog(state, action) {
       return [...state.filter((blog) => blog.id !== action.payload)];
