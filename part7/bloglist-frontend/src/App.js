@@ -4,6 +4,7 @@ import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import userService from "./services/users";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setNotification,
@@ -12,11 +13,14 @@ import {
 import { setBlog, addBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
 import { setLoggedInUser, logOut } from "./reducers/authReducer";
 import Notification from "./components/Notification";
+import { Route, Routes, Link } from "react-router-dom";
+import { setUsers } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
   const auth = useSelector((state) => state.auth);
+  const users = useSelector((state) => state.users);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +30,12 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogData) => {
       dispatch(setBlog(blogData));
+    });
+  }, []);
+
+  useEffect(() => {
+    userService.getAllUsers().then((userData) => {
+      dispatch(setUsers(userData));
     });
   }, []);
 
@@ -130,6 +140,63 @@ const App = () => {
     dispatch(deleteBlog(blogToDelete.id));
   };
 
+  const BlogHeader = () => {
+    return (
+      <div>
+        <h2>blogs</h2>
+        {userInfo()}
+      </div>
+    );
+  };
+
+  const BlogList = () => {
+    return (
+      <div>
+        <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
+          <BlogForm newBlogHandler={handleNewBlog} />
+        </Togglable>
+        {[...blogs]
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              likeBlog={sendLikeToBlog}
+              removeBlogFromList={removeBlogFromList}
+            />
+          ))}
+      </div>
+    );
+  };
+
+  const Users = () => {
+    return (
+      <div>
+        <h2>Users</h2>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Blogs Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.username}>
+                <td>{user.name}</td>
+                <td>{user.blogs.length}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const padded = {
+    padding: "1em",
+  };
+
   return (
     <div>
       <Notification />
@@ -137,21 +204,21 @@ const App = () => {
         loginForm()
       ) : (
         <>
-          {userInfo()}
-          <h2>blogs</h2>
-          <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
-            <BlogForm newBlogHandler={handleNewBlog} />
-          </Togglable>
-          {[...blogs]
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                likeBlog={sendLikeToBlog}
-                removeBlogFromList={removeBlogFromList}
-              />
-            ))}
+          <div>
+            <Link style={padded} to="/">
+              Home
+            </Link>
+            <Link style={padded} to="/users">
+              Users
+            </Link>
+          </div>
+
+          <BlogHeader />
+
+          <Routes>
+            <Route path="/" element={<BlogList />} />
+            <Route path="/users" element={<Users />} />
+          </Routes>
         </>
       )}
     </div>
