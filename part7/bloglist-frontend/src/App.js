@@ -13,7 +13,7 @@ import {
 import { setBlog, addBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
 import { setLoggedInUser, logOut } from "./reducers/authReducer";
 import Notification from "./components/Notification";
-import { Route, Routes, Link } from "react-router-dom";
+import { Route, Routes, Link, useParams } from "react-router-dom";
 import { setUsers } from "./reducers/userReducer";
 
 const App = () => {
@@ -183,12 +183,33 @@ const App = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.username}>
-                <td>{user.name}</td>
+                <td>
+                  <Link to={`/users/${user._id}`}>{user.name}</Link>
+                </td>
                 <td>{user.blogs.length}</td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+    );
+  };
+
+  const UserDetail = () => {
+    const id = useParams().id;
+    const user = users.find((data) => data._id === id);
+
+    if (!user) {
+      return null;
+    }
+
+    return (
+      <div>
+        <h1>{user.name}</h1>
+        <h2>Added blogs</h2>
+        {user.blogs.map((blog) => (
+          <li key={blog.id}>{blog.title}</li>
+        ))}
       </div>
     );
   };
@@ -218,6 +239,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<BlogList />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<UserDetail />} />
           </Routes>
         </>
       )}
