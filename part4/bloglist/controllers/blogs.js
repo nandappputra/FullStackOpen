@@ -72,7 +72,7 @@ blogsRouter.post("/:id/comments", async (request, response) => {
   const blog = await Blog.findById(blogToBeCommentedId);
   blog.comments.push(comment);
 
-  const result = await Blog.updateOne({ _id: blogToUpdateId }, blog);
+  const result = await Blog.updateOne({ _id: blogToBeCommentedId }, blog);
 
   response.status(201).json(result);
 });

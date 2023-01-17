@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
+import CommentForm from "./components/CommentForm";
 import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -244,8 +245,9 @@ const App = () => {
         </p>
         <p>added by {blog.author}</p>
         <h3>comments</h3>
-        {blog.comments.map((comment, idx) => (
-          <li key={idx}>{comment}</li>
+        {<CommentForm blog={blog} />}
+        {blog.comments.map((commentData, idx) => (
+          <li key={idx}>{commentData}</li>
         ))}
       </div>
     );

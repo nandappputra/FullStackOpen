@@ -11,7 +11,17 @@ const blogSlice = createSlice({
       return state.concat(action.payload);
     },
     commentBlog(state, action) {
-      return { ...state, comments: [...state.comments, action.payload] };
+      const blogId = action.payload.id;
+      const blogToComment = state.find((blog) => blog.id === blogId);
+      const filteredBlog = state.filter((blog) => blog.id !== blogId);
+
+      return [
+        ...filteredBlog,
+        {
+          ...blogToComment,
+          comments: [...blogToComment.comments, action.payload.comment],
+        },
+      ];
     },
     likeBlog(state, action) {
       const blogId = action.payload;

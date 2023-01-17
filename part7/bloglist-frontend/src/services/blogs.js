@@ -57,7 +57,7 @@ const commentBlog = async (id, comment) => {
   };
 
   const response = await axios.post(
-    `${baseUrl}/${id}/comment`,
+    `${baseUrl}/${id}/comments`,
     { comment },
     config
   );
