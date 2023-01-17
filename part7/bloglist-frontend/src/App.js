@@ -10,16 +10,16 @@ import {
   clearNotification,
 } from "./reducers/notificationReducer";
 import { setBlog, addBlog, likeBlog, deleteBlog } from "./reducers/blogReducer";
+import { setLoggedInUser, logOut } from "./reducers/authReducer";
 import Notification from "./components/Notification";
 
 const App = () => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
+  const auth = useSelector((state) => state.auth);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
 
@@ -33,7 +33,7 @@ const App = () => {
     const loginInfo = window.localStorage.getItem("loginInfo");
     if (loginInfo) {
       const loggedInUser = JSON.parse(loginInfo);
-      setUser(loggedInUser);
+      dispatch(setLoggedInUser(loggedInUser));
       blogService.setToken(loggedInUser.token);
     }
   }, []);
@@ -44,11 +44,11 @@ const App = () => {
       const loginInfo = await loginService.login({ username, password });
       window.localStorage.setItem("loginInfo", JSON.stringify(loginInfo));
       blogService.setToken(loginInfo.token);
-      setUser(loginInfo);
+      dispatch(setLoggedInUser(loginInfo));
       setUsername("");
       setPassword("");
     } catch (error) {
-      dispatch(setNotification("wow"));
+      dispatch(setNotification(error));
 
       setTimeout(() => dispatch(clearNotification()), 5000);
     }
@@ -57,7 +57,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("loginInfo");
     blogService.setToken(null);
-    setUser(null);
+    dispatch(logOut());
   };
 
   const handleNewBlog = async (newBlog) => {
@@ -112,7 +112,7 @@ const App = () => {
   const userInfo = () => {
     return (
       <>
-        <p>User {user.name} is logged in</p>
+        <p>User {auth.name} is logged in</p>
         <button type="button" onClick={handleLogout}>
           logout
         </button>
@@ -133,7 +133,7 @@ const App = () => {
   return (
     <div>
       <Notification />
-      {user === null ? (
+      {auth === null ? (
         loginForm()
       ) : (
         <>

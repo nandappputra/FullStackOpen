@@ -5,7 +5,7 @@ const blogSlice = createSlice({
   initialState: [],
   reducers: {
     setBlog(state, action) {
-      return [...state, ...action.payload];
+      return [...action.payload];
     },
     addBlog(state, action) {
       return state.concat(action.payload);
