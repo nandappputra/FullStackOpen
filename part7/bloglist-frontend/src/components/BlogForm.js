@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "react-bootstrap/Button";
 
 const BlogForm = (props) => {
   const [title, setTitle] = useState("");
@@ -17,9 +18,9 @@ const BlogForm = (props) => {
   return (
     <>
       <h2>create new</h2>
-      <form onSubmit={handleNewBlog}>
-        <div>
-          title
+      <form onSubmit={handleNewBlog} style={{ display: "table" }}>
+        <div style={{ display: "table-row" }}>
+          <label style={{ display: "table-cell" }}>title</label>
           <input
             type="text"
             value={title}
@@ -27,10 +28,11 @@ const BlogForm = (props) => {
             onChange={({ target }) => setTitle(target.value)}
             placeholder="title of the blog"
             id="blog-title"
+            style={{ display: "table-cell" }}
           />
         </div>
-        <div>
-          author
+        <div style={{ display: "table-row" }}>
+          <label style={{ display: "table-cell" }}>author</label>
           <input
             type="text"
             value={author}
@@ -38,10 +40,11 @@ const BlogForm = (props) => {
             onChange={({ target }) => setAuthor(target.value)}
             placeholder="name of the author"
             id="blog-author"
+            style={{ display: "table-cell" }}
           />
         </div>
-        <div>
-          url
+        <div style={{ display: "table-row" }}>
+          <label style={{ display: "table-cell" }}>url</label>
           <input
             type="text"
             value={url}
@@ -49,11 +52,12 @@ const BlogForm = (props) => {
             onChange={({ target }) => setUrl(target.value)}
             placeholder="url of the blog"
             id="blog-url"
+            style={{ display: "table-cell" }}
           />
         </div>
-        <button type="submit" id="blog-submit">
+        <Button type="submit" variant="primary" id="blog-submit">
           create
-        </button>
+        </Button>
       </form>
     </>
   );

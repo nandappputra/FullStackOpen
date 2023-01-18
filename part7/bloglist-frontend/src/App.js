@@ -16,6 +16,11 @@ import { setLoggedInUser, logOut } from "./reducers/authReducer";
 import Notification from "./components/Notification";
 import { Route, Routes, Link, useParams } from "react-router-dom";
 import { setUsers } from "./reducers/userReducer";
+import Table from "react-bootstrap/Table";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import Button from "react-bootstrap/Button";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -88,44 +93,50 @@ const App = () => {
 
   const loginForm = () => {
     return (
-      <>
+      <Container>
         <h2>log in to application</h2>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
+        <form onSubmit={handleLogin} style={{ display: "table" }}>
+          <div style={{ display: "table-row" }}>
+            <label style={{ display: "table-cell" }}>username</label>
             <input
               type="text"
               value={username}
               name="Username"
               id="username"
               onChange={({ target }) => setUsername(target.value)}
+              style={{ display: "table-cell" }}
             />
           </div>
-          <div>
-            password
+          <div style={{ display: "table-row" }}>
+            <label style={{ display: "table-cell" }}>passwosrd</label>
             <input
               type="password"
               value={password}
               name="Password"
               id="password"
               onChange={({ target }) => setPassword(target.value)}
+              style={{ display: "table-cell" }}
             />
           </div>
-          <button type="submit" id="login-button">
+          <Button type="submit" id="login-button" variant="primary">
             login
-          </button>
+          </Button>
         </form>
-      </>
+      </Container>
     );
   };
 
   const userInfo = () => {
     return (
       <>
-        {auth.name} is logged in{" "}
-        <button type="button" onClick={handleLogout}>
+        {auth.name}
+        <Button
+          variant="outline-dark"
+          onClick={handleLogout}
+          style={{ margin: "0.5em" }}
+        >
           logout
-        </button>
+        </Button>
       </>
     );
   };
@@ -142,43 +153,63 @@ const App = () => {
 
   const NavigationBar = () => {
     return (
-      <div>
-        <Link style={padded} to="/">
-          Home
-        </Link>
-        <Link style={padded} to="/users">
-          Users
-        </Link>
-        {userInfo()}
-      </div>
+      <Navbar bg="light">
+        <Container>
+          <Navbar.Brand>Blogs App</Navbar.Brand>
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link>
+                <Link style={padded} to="/">
+                  Home
+                </Link>
+              </Nav.Link>
+              <Nav.Link>
+                <Link style={padded} to="/users">
+                  Users
+                </Link>
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+          <Navbar.Collapse className="justify-content-end">
+            {userInfo()}
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     );
   };
 
   const BlogList = () => {
     return (
-      <div>
-        <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
-          <BlogForm newBlogHandler={handleNewBlog} />
-        </Togglable>
-        {[...blogs]
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              likeBlog={sendLikeToBlog}
-              removeBlogFromList={removeBlogFromList}
-            />
-          ))}
-      </div>
+      <Container>
+        <div>
+          <h2>Blog List</h2>
+          <Togglable showButton="new blog" hideButton="hide" ref={blogFormRef}>
+            <BlogForm newBlogHandler={handleNewBlog} />
+          </Togglable>
+        </div>
+        <Table striped bordered hover>
+          <tbody>
+            {[...blogs]
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  likeBlog={sendLikeToBlog}
+                  removeBlogFromList={removeBlogFromList}
+                />
+              ))}
+          </tbody>
+        </Table>
+      </Container>
     );
   };
 
   const Users = () => {
     return (
-      <div>
+      <Container>
         <h2>Users</h2>
-        <table>
+        <Table striped bordered hover>
           <thead>
             <tr>
               <th></th>
@@ -195,8 +226,8 @@ const App = () => {
               </tr>
             ))}
           </tbody>
-        </table>
-      </div>
+        </Table>
+      </Container>
     );
   };
 
@@ -209,15 +240,26 @@ const App = () => {
     }
 
     return (
-      <div>
+      <Container>
         <h1>{user.name}</h1>
-        <h2>Added blogs</h2>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-          </li>
-        ))}
-      </div>
+        <h4>Added blogs</h4>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Blogs Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {user.blogs.map((blog) => (
+              <tr key={blog.id}>
+                <td>
+                  <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
     );
   };
 
@@ -230,26 +272,33 @@ const App = () => {
     }
 
     return (
-      <div>
+      <Container>
         <h1>{blog.title}</h1>
         <a href={blog.url}>{blog.url}</a>
         <p>
           {blog.likes} likes{" "}
-          <button
+          <Button
             onClick={() => {
               sendLikeToBlog({ ...blog, likes: blog.likes + 1 });
             }}
           >
             like
-          </button>
+          </Button>
         </p>
         <p>added by {blog.author}</p>
         <h3>comments</h3>
         {<CommentForm blog={blog} />}
-        {blog.comments.map((commentData, idx) => (
-          <li key={idx}>{commentData}</li>
-        ))}
-      </div>
+
+        <Table striped bordered hover>
+          <tbody>
+            {blog.comments.map((commentData, idx) => (
+              <tr key={idx}>
+                <td>{commentData}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
     );
   };
 
@@ -265,7 +314,6 @@ const App = () => {
       ) : (
         <>
           <NavigationBar />
-          <h2>blogs</h2>
 
           <Routes>
             <Route path="/" element={<BlogList />} />
