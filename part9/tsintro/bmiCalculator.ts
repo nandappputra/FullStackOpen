@@ -1,3 +1,14 @@
+import { validateBmiCalculatorInput } from "./validator";
+
+function calculateBmiFromArguments(args: string[]): void {
+  validateBmiCalculatorInput(args);
+
+  const height = Number(args[2]);
+  const weight = Number(args[3]);
+
+  console.log(calculateBmi(height, weight));
+}
+
 function calculateBmi(heightInCm: number, massInKg: number): string {
   let bmi = massInKg / (((heightInCm / 100) * heightInCm) / 100);
 
@@ -20,4 +31,4 @@ function calculateBmi(heightInCm: number, massInKg: number): string {
   }
 }
 
-console.log(calculateBmi(180, 74));
+calculateBmiFromArguments(process.argv);

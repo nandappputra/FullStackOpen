@@ -1,3 +1,5 @@
+import { validateExerciseCalculatorInput } from "./validator";
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -6,6 +8,15 @@ interface Result {
   ratingDescription: string;
   target: number;
   average: number;
+}
+
+function calculateExerciseFromArguments(args: string[]): void {
+  validateExerciseCalculatorInput(args);
+
+  const target = Number(args[2]);
+  const exerciseData = args.slice(3).map((arg) => Number(arg));
+
+  console.log(calculateExercise(exerciseData, target));
 }
 
 function calculateExercise(dailyExercises: number[], target: number): Result {
@@ -28,5 +39,4 @@ function calculateExercise(dailyExercises: number[], target: number): Result {
         : "great job!",
   };
 }
-
-console.log(calculateExercise([3, 0, 2, 4.5, 0, 3, 1], 2));
+calculateExerciseFromArguments(process.argv);
