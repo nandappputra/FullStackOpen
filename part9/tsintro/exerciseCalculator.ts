@@ -20,7 +20,7 @@ function calculateExerciseFromArguments(args: string[]): void {
 }
 
 function calculateExercise(dailyExercises: number[], target: number): Result {
-  let average =
+  const average =
     dailyExercises.reduce((prev, current) => prev + current) /
     dailyExercises.length;
 

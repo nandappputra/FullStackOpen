@@ -10,7 +10,7 @@ export function calculateBmiFromArguments(args: string[]): string {
 }
 
 export function calculateBmi(heightInCm: number, massInKg: number): string {
-  let bmi = massInKg / (((heightInCm / 100) * heightInCm) / 100);
+  const bmi = massInKg / (((heightInCm / 100) * heightInCm) / 100);
 
   if (bmi < 16) {
     return "Underweight (Severe thinness)";
