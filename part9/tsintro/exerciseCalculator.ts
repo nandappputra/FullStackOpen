@@ -10,7 +10,7 @@ interface Result {
   average: number;
 }
 
-function calculateExerciseFromArguments(args: string[]): void {
+export function calculateExerciseFromArguments(args: string[]): void {
   validateExerciseCalculatorInput(args);
 
   const target = Number(args[2]);
@@ -19,7 +19,10 @@ function calculateExerciseFromArguments(args: string[]): void {
   console.log(calculateExercise(exerciseData, target));
 }
 
-function calculateExercise(dailyExercises: number[], target: number): Result {
+export function calculateExercise(
+  dailyExercises: number[],
+  target: number
+): Result {
   const average =
     dailyExercises.reduce((prev, current) => prev + current) /
     dailyExercises.length;
@@ -39,4 +42,3 @@ function calculateExercise(dailyExercises: number[], target: number): Result {
         : "great job!",
   };
 }
-calculateExerciseFromArguments(process.argv);
