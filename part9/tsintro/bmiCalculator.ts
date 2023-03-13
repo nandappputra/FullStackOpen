@@ -1,15 +1,15 @@
 import { validateBmiCalculatorInput } from "./validator";
 
-function calculateBmiFromArguments(args: string[]): void {
+export function calculateBmiFromArguments(args: string[]): string {
   validateBmiCalculatorInput(args);
 
   const height = Number(args[2]);
   const weight = Number(args[3]);
 
-  console.log(calculateBmi(height, weight));
+  return calculateBmi(height, weight);
 }
 
-function calculateBmi(heightInCm: number, massInKg: number): string {
+export function calculateBmi(heightInCm: number, massInKg: number): string {
   let bmi = massInKg / (((heightInCm / 100) * heightInCm) / 100);
 
   if (bmi < 16) {
@@ -30,5 +30,3 @@ function calculateBmi(heightInCm: number, massInKg: number): string {
     return "Obese (Class III)";
   }
 }
-
-calculateBmiFromArguments(process.argv);
