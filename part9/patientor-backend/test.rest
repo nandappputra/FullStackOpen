@@ -3,3 +3,16 @@ GET http://localhost:3001/api/diagnoses HTTP/1.1
 ###
 
 GET http://localhost:3001/api/patients HTTP/1.1
+
+###
+
+POST http://localhost:3001/api/patients HTTP/1.1
+content-type: application/json
+
+{
+  "name": "test",
+  "dateOfBirth": "2020-01-01",
+  "ssn": "test123",
+  "gender": "male",
+  "occupation": "cop"
+}
