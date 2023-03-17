@@ -3,6 +3,7 @@ import { postNewDiary } from "../services/DiariesService";
 import { NewDiaryEntry, NonSensitiveDiaryEntry } from "../types/DiaryEntry";
 import { DiaryFormProps } from "../types/DiaryFormProps";
 import { parseVisibility, parseWeather } from "../utils/DiaryUtils";
+import axios from "axios";
 
 export function DiaryForm(diaryFormProps: DiaryFormProps): JSX.Element {
   const [date, setDate] = useState<string>("");
@@ -13,23 +14,33 @@ export function DiaryForm(diaryFormProps: DiaryFormProps): JSX.Element {
   const createNewDiary = (event: React.SyntheticEvent): void => {
     event.preventDefault();
 
-    const newDiary: NewDiaryEntry = {
-      date,
-      weather: parseWeather(weather),
-      visibility: parseVisibility(visibility),
-      comment,
-    };
-
-    postNewDiary(newDiary).then((diaryEntry) => {
-      const addedDiary: NonSensitiveDiaryEntry = {
-        id: diaryEntry.id,
+    try {
+      const newDiary: NewDiaryEntry = {
         date,
         weather: parseWeather(weather),
         visibility: parseVisibility(visibility),
+        comment,
       };
 
-      diaryFormProps.addDiaryEntry(addedDiary);
-    });
+      postNewDiary(newDiary).then((diaryEntry) => {
+        const addedDiary: NonSensitiveDiaryEntry = {
+          id: diaryEntry.id,
+          date,
+          weather: parseWeather(weather),
+          visibility: parseVisibility(visibility),
+        };
+
+        diaryFormProps.addDiaryEntry(addedDiary);
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        diaryFormProps.setAlert(error.message);
+      }
+
+      if (error instanceof Error) {
+        diaryFormProps.setAlert(error.message);
+      }
+    }
   };
 
   return (

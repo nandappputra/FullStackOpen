@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Alert } from "./components/Alert";
 import { Diary } from "./components/Diary";
 import { DiaryForm } from "./components/DiaryForm";
 import { getAllDiaries } from "./services/DiariesService";
@@ -8,6 +9,7 @@ function App() {
   const [diaryEntries, setDiaryEntries] = useState<NonSensitiveDiaryEntry[]>(
     []
   );
+  const [alert, setAlert] = useState<string>("");
 
   useEffect(() => {
     getAllDiaries().then((diaries) => {
@@ -19,9 +21,18 @@ function App() {
     setDiaryEntries([...diaryEntries, diaryEntry]);
   };
 
+  const setAlertMessage = (alert: string) => {
+    setAlert(alert);
+
+    setTimeout(() => {
+      setAlert("");
+    }, 5000);
+  };
+
   return (
     <div>
-      <DiaryForm addDiaryEntry={addDiaryEntries} />
+      <Alert alert={alert} />
+      <DiaryForm addDiaryEntry={addDiaryEntries} setAlert={setAlertMessage} />
       <Diary diaryEntries={diaryEntries} />
     </div>
   );
