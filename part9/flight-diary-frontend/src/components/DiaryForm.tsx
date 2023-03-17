@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { postNewDiary } from "../services/DiariesService";
-import { NewDiaryEntry, NonSensitiveDiaryEntry } from "../types/DiaryEntry";
+import {
+  NewDiaryEntry,
+  NonSensitiveDiaryEntry,
+  Visibility,
+  Weather,
+} from "../types/DiaryEntry";
 import { DiaryFormProps } from "../types/DiaryFormProps";
 import { parseVisibility, parseWeather } from "../utils/DiaryUtils";
 import axios from "axios";
@@ -48,7 +53,7 @@ export function DiaryForm(diaryFormProps: DiaryFormProps): JSX.Element {
       <div>
         <label>Date:</label>
         <input
-          type="text"
+          type="date"
           id="date"
           onChange={(event) => {
             setDate(event.target.value);
@@ -58,24 +63,48 @@ export function DiaryForm(diaryFormProps: DiaryFormProps): JSX.Element {
 
       <div>
         <label>Weather:</label>
-        <input
-          type="text"
-          id="weather"
-          onChange={(event) => {
-            setWeather(event.target.value);
-          }}
-        ></input>
+        <fieldset>
+          {Object.values(Weather).map((entry) => (
+            <>
+              <input
+                type="radio"
+                id={`weather-${entry.toString()}`}
+                key={entry.toString()}
+                value={entry.toString()}
+                name="weather"
+                onChange={(event) => {
+                  setWeather(event.target.value);
+                }}
+              ></input>
+              <label htmlFor={`weather-${entry.toString()}`}>
+                {entry.toString()}
+              </label>
+            </>
+          ))}
+        </fieldset>
       </div>
 
       <div>
         <label>Visibility:</label>
-        <input
-          type="text"
-          id="visibility"
-          onChange={(event) => {
-            setVisibility(event.target.value);
-          }}
-        ></input>
+        <fieldset>
+          {Object.values(Visibility).map((entry) => (
+            <>
+              <input
+                type="radio"
+                id={`visibility-${entry.toString()}`}
+                key={entry.toString()}
+                value={entry.toString()}
+                name="visibility"
+                onChange={(event) => {
+                  setVisibility(event.target.value);
+                }}
+              ></input>
+              <label htmlFor={`visibility-${entry.toString()}`}>
+                {entry.toString()}
+              </label>
+            </>
+          ))}
+        </fieldset>
       </div>
 
       <div>
