@@ -1,3 +1,4 @@
+import { Entry } from "./Entry";
 import { Gender } from "./Gender";
 
 export interface Patient {
@@ -7,4 +8,5 @@ export interface Patient {
   ssn: string;
   gender: Gender;
   occupation: string;
+  entries: Entry[];
 }

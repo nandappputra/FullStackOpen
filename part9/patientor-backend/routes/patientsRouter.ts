@@ -11,8 +11,13 @@ router.get("/", (_req, res) => {
   res.send(getAllPatientsWithoutSSN());
 });
 
+router.get("/:id", (req, res) => {
+  res.send(
+    getAllPatientsWithoutSSN().find((patient) => patient.id === req.params.id)
+  );
+});
+
 router.post("/", (req, res) => {
-  console.log(req);
   try {
     const newPatient = toPatientEntry(req.body);
     const addedEntry = addPatient(newPatient);

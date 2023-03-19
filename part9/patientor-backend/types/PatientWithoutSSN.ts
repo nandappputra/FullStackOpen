@@ -1,3 +1,3 @@
 import { Patient } from "./Patient";
 
-export type PatientWithoutSSN = Omit<Patient, "ssn">;
+export type PatientWithoutSSN = Omit<Patient, "ssn" | "entries">;

@@ -1,8 +1,8 @@
+import { Entry } from "../types/Entry";
 import { Gender } from "../types/Gender";
 import { NewPatient } from "../types/newPatient";
 
 export function toPatientEntry(message: unknown): NewPatient {
-  console.log(message);
   if (!message || typeof message !== "object") {
     throw new Error("missing or invalid message");
   }
@@ -20,6 +20,7 @@ export function toPatientEntry(message: unknown): NewPatient {
       ssn: parseSSN(message.ssn),
       gender: parseGender(message.gender),
       occupation: parseOccupation(message.occupation),
+      entries: new Array<Entry>(),
     };
 
     return newPatient;
