@@ -33,3 +33,19 @@ export function addPatient(newPatient: NewPatient): Patient {
 
   return patient;
 }
+
+export function addPatientEntry(entry: Entry, id: string): Patient {
+  const patient = patients.find((patient) => patient.id === id);
+
+  if (patient) {
+    if (patient.entries) {
+      patient.entries.push(entry);
+    } else {
+      patient.entries = [entry];
+    }
+
+    return patient;
+  }
+
+  throw new Error("user not found");
+}
