@@ -1,6 +1,15 @@
 import { useParams } from "react-router-dom";
-import { Diagnosis, Entry, Patient } from "../../types";
-import { isHealthCheckEntry } from "../../utils/patientUtils";
+import {
+  Diagnosis,
+  Entry,
+  HealthCheckEntry,
+  HospitalEntry,
+  OccupationalHealthcareEntry,
+  Patient,
+} from "../../types";
+import { HealthCheckEntryDetail } from "../EntryDetail/HealthCheckEntryDetail";
+import { HospitalEntryDetail } from "../EntryDetail/HospitalEntryDetail";
+import { OccupationalHealthcareEntryDetail } from "../EntryDetail/OccupationalHealthcareEntryDetail";
 
 interface Props {
   patients: Patient[];
@@ -20,20 +29,20 @@ const PatientDetailPage = ({ patients, diagnosis }: Props) => {
   }
 
   const buildDiagnosesCode = (entry: Entry): JSX.Element => {
-    if (!isHealthCheckEntry(entry)) {
-      return (
-        <ul>
-          {entry.diagnosisCodes?.map((diagnosisCode) => (
-            <li key={`${entry.id}-${diagnosisCode}`}>
-              {diagnosisCode}{" "}
-              {diagnosis.find((data) => data.code === diagnosisCode)?.name}
-            </li>
-          ))}
-        </ul>
-      );
+    switch (entry.type) {
+      case "Hospital":
+        return <HospitalEntryDetail entry={entry as HospitalEntry} />;
+      case "OccupationalHealthcare":
+        return (
+          <OccupationalHealthcareEntryDetail
+            entry={entry as OccupationalHealthcareEntry}
+          />
+        );
+      case "HealthCheck":
+        return <HealthCheckEntryDetail entry={entry as HealthCheckEntry} />;
+      default:
+        throw new Error("unknown type");
     }
-
-    return <></>;
   };
 
   return (
@@ -43,12 +52,7 @@ const PatientDetailPage = ({ patients, diagnosis }: Props) => {
       <p>occupation: {patient.occupation}</p>
       <h4>
         {patient.entries.map((entry) => (
-          <div key={entry.id}>
-            <p>
-              {entry.date} {entry.description}
-            </p>
-            {buildDiagnosesCode(entry)}
-          </div>
+          <div key={entry.id}>{buildDiagnosesCode(entry)}</div>
         ))}
       </h4>
     </div>
