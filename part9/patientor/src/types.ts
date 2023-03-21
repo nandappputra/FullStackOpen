@@ -7,7 +7,7 @@ export interface Diagnosis {
 export enum Gender {
   Male = "male",
   Female = "female",
-  Other = "other"
+  Other = "other",
 }
 
 export interface Patient {
@@ -17,6 +17,52 @@ export interface Patient {
   gender: Gender;
   ssn?: string;
   dateOfBirth?: string;
+  entries: Entry[];
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export type Entry =
+  | OccupationalHealthcareEntry
+  | HospitalEntry
+  | HealthCheckEntry;
+
+export interface SickLeave {
+  startDate: string;
+  endDate: string;
+}
+
+export interface Discharge {
+  date: string;
+  criteria: string;
+}
+
+export interface OccupationalHealthcareEntry {
+  id: string;
+  date: string;
+  type: string;
+  specialist: string;
+  employerName: string;
+  diagnosisCodes?: Array<string>;
+  description: string;
+  sickLeave?: SickLeave;
+}
+
+export interface HospitalEntry {
+  id: string;
+  date: string;
+  type: string;
+  specialist: string;
+  diagnosisCodes: Array<string>;
+  description: string;
+  discharge: Discharge;
+}
+
+export interface HealthCheckEntry {
+  id: string;
+  date: string;
+  specialist: string;
+  type: string;
+  description: string;
+  healthCheckRating: number;
+}
