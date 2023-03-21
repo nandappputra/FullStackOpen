@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
-import { Entry, Patient } from "../../types";
+import { Diagnosis, Entry, Patient } from "../../types";
 import { isHealthCheckEntry } from "../../utils/patientUtils";
 
 interface Props {
   patients: Patient[];
+  diagnosis: Diagnosis[];
 }
 
-const PatientDetailPage = ({ patients }: Props) => {
+const PatientDetailPage = ({ patients, diagnosis }: Props) => {
   const id = useParams().id;
   const patient = patients.find((data) => data.id === id);
 
@@ -22,8 +23,11 @@ const PatientDetailPage = ({ patients }: Props) => {
     if (!isHealthCheckEntry(entry)) {
       return (
         <ul>
-          {entry.diagnosisCodes?.map((diagnosis) => (
-            <li key={`${entry.id}-${diagnosis}`}>{diagnosis}</li>
+          {entry.diagnosisCodes?.map((diagnosisCode) => (
+            <li key={`${entry.id}-${diagnosisCode}`}>
+              {diagnosisCode}{" "}
+              {diagnosis.find((data) => data.code === diagnosisCode)?.name}
+            </li>
           ))}
         </ul>
       );
