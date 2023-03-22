@@ -1,9 +1,10 @@
 import {
   Discharge,
   Entry,
-  HealthCheckEntry,
-  HospitalEntry,
-  OccupationalHealthcareEntry,
+  NewHealthCheckEntry,
+  NewHospitalEntry,
+  NewEntry,
+  NewOccupationalHealthcareEntry,
   SickLeave,
 } from "../types/Entry";
 import { Gender } from "../types/Gender";
@@ -37,21 +38,25 @@ export function toPatientEntry(message: unknown): NewPatient {
   throw new Error("missing one of the required fields!");
 }
 
-export function toEntry(object: unknown): Entry {
+export function toNewEntry(object: unknown): NewEntry {
   if (!object || typeof object !== "object" || !("type" in object)) {
     throw new Error("missing type field");
   }
 
   switch (object.type) {
     case "Hospital":
-      return toHospitalEntry(object);
+      return toNewHospitalEntry(object);
     case "OccupationalHealthcare":
-      return toOccupationalHealthcareEntry(object);
+      return toNewOccupationalHealthcareEntry(object);
     case "HealthCheck":
-      return toHealthCheckEntry(object);
+      return toNewHealthCheckEntry(object);
     default:
       throw new Error("unknown type");
   }
+}
+
+export function toEntry(object: NewEntry, id: string): Entry {
+  return { ...object, id };
 }
 
 function toDiagnosisCodes(object: unknown): Array<Diagnose["code"]> {
@@ -62,18 +67,16 @@ function toDiagnosisCodes(object: unknown): Array<Diagnose["code"]> {
   return object.diagnosisCodes as Array<Diagnose["code"]>;
 }
 
-function toHospitalEntry(object: object): HospitalEntry {
+function toNewHospitalEntry(object: object): NewHospitalEntry {
   if (
-    "id" in object &&
     "date" in object &&
     "type" in object &&
     "specialist" in object &&
-    "diagnosisCode" in object &&
+    "diagnosisCodes" in object &&
     "description" in object &&
     "discharge" in object
   ) {
     return {
-      id: parseString(object.id),
       date: parseDate(object.date),
       type: parseString(object.type),
       specialist: parseString(object.specialist),
@@ -83,27 +86,26 @@ function toHospitalEntry(object: object): HospitalEntry {
     };
   }
 
+  console.log("somethings is missing!");
+
   throw new Error("incomplete fields for hospital entry");
 }
 
-function toOccupationalHealthcareEntry(
+function toNewOccupationalHealthcareEntry(
   object: object
-): OccupationalHealthcareEntry {
+): NewOccupationalHealthcareEntry {
   if (
-    "id" in object &&
     "date" in object &&
     "type" in object &&
     "specialist" in object &&
     "employerName" in object &&
     "description" in object
   ) {
-    const occupationalHealthcareEntry: OccupationalHealthcareEntry = {
-      id: parseString(object.id),
+    const occupationalHealthcareEntry: NewOccupationalHealthcareEntry = {
       date: parseDate(object.date),
       type: parseString(object.type),
       employerName: parseString(object.employerName),
       specialist: parseString(object.specialist),
-      diagnosisCodes: toDiagnosisCodes(object),
       description: parseString(object.description),
     };
 
@@ -123,9 +125,8 @@ function toOccupationalHealthcareEntry(
   throw new Error("incomplete fields for hospital entry");
 }
 
-function toHealthCheckEntry(object: object): HealthCheckEntry {
+function toNewHealthCheckEntry(object: object): NewHealthCheckEntry {
   if (
-    "id" in object &&
     "date" in object &&
     "type" in object &&
     "specialist" in object &&
@@ -133,7 +134,6 @@ function toHealthCheckEntry(object: object): HealthCheckEntry {
     "healthCheckRating" in object
   ) {
     return {
-      id: parseString(object.id),
       date: parseDate(object.date),
       type: parseString(object.type),
       specialist: parseString(object.specialist),

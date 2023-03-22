@@ -66,3 +66,15 @@ export interface HealthCheckEntry {
   description: string;
   healthCheckRating: number;
 }
+
+export type NewHospitalEntry = Omit<HospitalEntry, "id">;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, "id">;
+export type NewOccupationalHealthcareEntry = Omit<
+  OccupationalHealthcareEntry,
+  "id"
+>;
+
+export type NewEntry =
+  | NewHospitalEntry
+  | NewHealthCheckEntry
+  | NewOccupationalHealthcareEntry;

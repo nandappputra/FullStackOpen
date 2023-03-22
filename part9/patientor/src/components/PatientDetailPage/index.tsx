@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import {
   Diagnosis,
   Entry,
@@ -10,13 +11,18 @@ import {
 import { HealthCheckEntryDetail } from "../EntryDetail/HealthCheckEntryDetail";
 import { HospitalEntryDetail } from "../EntryDetail/HospitalEntryDetail";
 import { OccupationalHealthcareEntryDetail } from "../EntryDetail/OccupationalHealthcareEntryDetail";
+import { AddEntryForm } from "./AddEntryForrm";
+import { Alert } from "@mui/material";
 
 interface Props {
   patients: Patient[];
   diagnosis: Diagnosis[];
+  updatePatients(updatedPatient: Patient): void;
 }
 
-const PatientDetailPage = ({ patients, diagnosis }: Props) => {
+const PatientDetailPage = ({ patients, diagnosis, updatePatients }: Props) => {
+  const [alertMessage, setAlertMessage] = useState<string>("");
+
   const id = useParams().id;
   const patient = patients.find((data) => data.id === id);
 
@@ -45,11 +51,23 @@ const PatientDetailPage = ({ patients, diagnosis }: Props) => {
     }
   };
 
+  const setAlert = (message: string): void => {
+    setAlertMessage(message);
+
+    setTimeout(()=>setAlert(""), 5000);
+  }
+
   return (
     <div>
       <h3>{patient.name}</h3>
       <p>ssh: {patient.ssn}</p>
       <p>occupation: {patient.occupation}</p>
+      {alertMessage === "" ? (
+        <></>
+      ) : (
+        <Alert severity="error">{alertMessage}</Alert>
+      )}
+      <AddEntryForm patient={patient} updatePatients={updatePatients} setAlert={setAlert}/>
       <h4>
         {patient.entries.map((entry) => (
           <div key={entry.id}>{buildDiagnosesCode(entry)}</div>

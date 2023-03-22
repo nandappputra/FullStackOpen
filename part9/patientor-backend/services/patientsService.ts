@@ -3,7 +3,8 @@ import patients from "../data/patients";
 import { v4 as uuidv4 } from "uuid";
 import { NewPatient } from "../types/newPatient";
 import { Patient } from "../types/Patient";
-import { Entry } from "../types/Entry";
+import { Entry, NewEntry } from "../types/Entry";
+import { toEntry } from "../utils/patientsUtil";
 
 export function getAllPatientsWithoutSSN(): PatientWithoutSSN[] {
   return patients.map(
@@ -34,8 +35,10 @@ export function addPatient(newPatient: NewPatient): Patient {
   return patient;
 }
 
-export function addPatientEntry(entry: Entry, id: string): Patient {
+export function addPatientEntry(newEntry: NewEntry, id: string): Entry {
   const patient = patients.find((patient) => patient.id === id);
+  const generatedId = uuidv4();
+  const entry = toEntry(newEntry, generatedId);
 
   if (patient) {
     if (patient.entries) {
@@ -44,7 +47,7 @@ export function addPatientEntry(entry: Entry, id: string): Patient {
       patient.entries = [entry];
     }
 
-    return patient;
+    return entry;
   }
 
   throw new Error("user not found");

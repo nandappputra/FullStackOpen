@@ -4,7 +4,7 @@ import {
   addPatient,
   addPatientEntry,
 } from "../services/patientsService";
-import { toEntry, toPatientEntry } from "../utils/patientsUtil";
+import { toNewEntry, toPatientEntry } from "../utils/patientsUtil";
 
 const router = Express.Router();
 
@@ -20,9 +20,9 @@ router.get("/:id", (req, res) => {
 
 router.post("/:id/entries", (req, res) => {
   try {
-    const newEntry = toEntry(req.body);
-    const updatedPatient = addPatientEntry(newEntry, req.params.id);
-    res.json(updatedPatient);
+    const newEntry = toNewEntry(req.body);
+    const addedEntry = addPatientEntry(newEntry, req.params.id);
+    res.json(addedEntry);
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(400);

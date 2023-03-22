@@ -32,6 +32,14 @@ const App = () => {
     void fetchDiagnosisList();
   }, []);
 
+  const updatePatients = (updatedPatient: Patient) => {
+    const filteredPatient = patients.filter(
+      (data) => data.id !== updatedPatient.id
+    );
+
+    setPatients([...filteredPatient, updatedPatient]);
+  };
+
   return (
     <div className="App">
       <Router>
@@ -56,7 +64,11 @@ const App = () => {
             <Route
               path="/patients/:id"
               element={
-                <PatientDetailPage patients={patients} diagnosis={diagnosis} />
+                <PatientDetailPage
+                  patients={patients}
+                  diagnosis={diagnosis}
+                  updatePatients={updatePatients}
+                />
               }
             />
           </Routes>
