@@ -8,7 +8,9 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useState } from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
+  Diagnosis,
   Entry,
   NewEntry,
   NewHealthCheckEntry,
@@ -18,22 +20,27 @@ import {
 } from "../../types";
 import patientService from "../../services/patients";
 import axios from "axios";
+import { DatePicker } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { toStringArray } from "../../utils/patientUtils";
 
 interface Props {
   patient: Patient;
   updatePatients(updatedPatient: Patient): void;
   setAlert(message: string): void;
+  diagnosis: Diagnosis[];
 }
 
 export function AddEntryForm({
   patient,
   updatePatients,
   setAlert,
+  diagnosis,
 }: Props): JSX.Element {
   const [date, setDate] = useState<string>("");
   const [entryType, setEntryType] = useState<string>("");
   const [specialist, setSpecialist] = useState<string>("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string>("");
+  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [description, setDescription] = useState<string>("");
   const [dischargeDate, setDischargeDate] = useState<string>("");
   const [dischargeCriteria, setDischargeCriteria] = useState<string>("");
@@ -46,7 +53,7 @@ export function AddEntryForm({
     setDate("");
     setEntryType("");
     setSpecialist("");
-    setDiagnosisCodes("");
+    setDiagnosisCodes([]);
     setDescription("");
     setDischargeDate("");
     setDischargeCriteria("");
@@ -57,10 +64,16 @@ export function AddEntryForm({
   };
 
   const entryTypes = ["Hospital", "OccupationalHealthcare", "HealthCheck"];
+  const healthCheckRatingOptions = ["1", "2", "3"];
 
   const onTypeChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
     setEntryType(event.target.value);
+  };
+
+  const onHealthCheckRatingChange = (event: SelectChangeEvent<string>) => {
+    event.preventDefault();
+    setHealthCheckRating(event.target.value);
   };
 
   const addEntry = async (event: React.SyntheticEvent) => {
@@ -72,7 +85,7 @@ export function AddEntryForm({
           date,
           type: entryType,
           specialist,
-          diagnosisCodes: diagnosisCodes.split(","),
+          diagnosisCodes: diagnosisCodes,
           description,
           discharge: { date: dischargeDate, criteria: dischargeCriteria },
         };
@@ -97,7 +110,7 @@ export function AddEntryForm({
           specialist,
           description,
           employerName,
-          diagnosisCodes: diagnosisCodes.split(","),
+          diagnosisCodes: diagnosisCodes,
           sickLeave: {
             startDate: sickLeaveStartDate,
             endDate: sickLeaveEndDate,
@@ -132,24 +145,28 @@ export function AddEntryForm({
   const showHospitalEntryFields = () => {
     return (
       <>
-        <TextField
+        <Select
           label="Diagnosis Codes"
           fullWidth
           value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value)}
-        />
-        <TextField
-          label="description"
-          fullWidth
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
-        />
+          onChange={({ target }) =>
+            setDiagnosisCodes(toStringArray(target.value))
+          }
+          multiple
+        >
+          {diagnosis.map((option) => (
+            <MenuItem key={option.code} value={option.code}>
+              {option.code}
+            </MenuItem>
+          ))}
+        </Select>
         <InputLabel style={{ marginTop: 20 }}>Discharge</InputLabel>
-        <TextField
+        <DatePicker
           label="Discharge date"
-          fullWidth
           value={dischargeDate}
-          onChange={({ target }) => setDischargeDate(target.value)}
+          onChange={(date) => {
+            if (date !== null) setDischargeDate(date);
+          }}
         />
         <TextField
           label="Discharge criteria"
@@ -170,12 +187,18 @@ export function AddEntryForm({
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="healthcheck rating"
+        <Select
+          label="Health check rating"
           fullWidth
           value={healthCheckRating}
-          onChange={({ target }) => setHealthCheckRating(target.value)}
-        />
+          onChange={onHealthCheckRatingChange}
+        >
+          {healthCheckRatingOptions.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
       </>
     );
   };
@@ -183,6 +206,21 @@ export function AddEntryForm({
   const showOccupationalHealthcareEntryFields = () => {
     return (
       <>
+        <Select
+          label="Diagnosis Codes"
+          fullWidth
+          value={diagnosisCodes}
+          onChange={({ target }) =>
+            setDiagnosisCodes(toStringArray(target.value))
+          }
+          multiple
+        >
+          {diagnosis.map((option) => (
+            <MenuItem key={option.code} value={option.code}>
+              {option.code}
+            </MenuItem>
+          ))}
+        </Select>
         <TextField
           label="description"
           fullWidth
@@ -196,17 +234,19 @@ export function AddEntryForm({
           onChange={({ target }) => setEmployerName(target.value)}
         />
         <InputLabel style={{ marginTop: 20 }}>Sick leave</InputLabel>
-        <TextField
+        <DatePicker
           label="sick leave start date"
-          fullWidth
           value={sickLeaveStartDate}
-          onChange={({ target }) => setSickLeaveStartDate(target.value)}
+          onChange={(date) => {
+            if (date !== null) setSickLeaveStartDate(date);
+          }}
         />
-        <TextField
+        <DatePicker
           label="sick leave end date"
-          fullWidth
           value={sickLeaveEndDate}
-          onChange={({ target }) => setSickLeaveEndDate(target.value)}
+          onChange={(date) => {
+            if (date !== null) setSickLeaveEndDate(date);
+          }}
         />
       </>
     );
@@ -222,62 +262,70 @@ export function AddEntryForm({
         borderColor: "black",
       }}
     >
-      <InputLabel style={{ margin: 20 }}>Entry Type</InputLabel>
-      <Select label="type" fullWidth value={entryType} onChange={onTypeChange}>
-        {entryTypes.map((option) => (
-          <MenuItem key={option} value={option}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-
-      <form onSubmit={addEntry}>
-        <TextField
-          label="Date"
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <InputLabel style={{ margin: 20 }}>Entry Type</InputLabel>
+        <Select
+          label="type"
           fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
-        <TextField
-          label="Specialist"
-          fullWidth
-          value={specialist}
-          onChange={({ target }) => setSpecialist(target.value)}
-        />
+          value={entryType}
+          onChange={onTypeChange}
+        >
+          {entryTypes.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
 
-        {entryType === "Hospital" ? showHospitalEntryFields() : <></>}
-        {entryType === "HealthCheck" ? showHealthCheckEntryFields() : <></>}
-        {entryType === "OccupationalHealthcare" ? (
-          showOccupationalHealthcareEntryFields()
-        ) : (
-          <></>
-        )}
+        <form onSubmit={addEntry}>
+          <DatePicker
+            label="Date"
+            value={date}
+            onChange={(date) => {
+              if (date !== null) setDate(date);
+            }}
+          />
+          <TextField
+            label="Specialist"
+            fullWidth
+            value={specialist}
+            onChange={({ target }) => setSpecialist(target.value)}
+          />
 
-        <Grid>
-          <Grid item>
-            <Button
-              color="secondary"
-              variant="contained"
-              style={{ float: "left" }}
-              type="button"
-              onClick={onCancel}
-            >
-              Cancel
-            </Button>
+          {entryType === "Hospital" ? showHospitalEntryFields() : <></>}
+          {entryType === "HealthCheck" ? showHealthCheckEntryFields() : <></>}
+          {entryType === "OccupationalHealthcare" ? (
+            showOccupationalHealthcareEntryFields()
+          ) : (
+            <></>
+          )}
+
+          <Grid>
+            <Grid item>
+              <Button
+                color="secondary"
+                variant="contained"
+                style={{ float: "left" }}
+                type="button"
+                onClick={onCancel}
+              >
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button
+                style={{
+                  float: "right",
+                }}
+                type="submit"
+                variant="contained"
+              >
+                Add
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button
-              style={{
-                float: "right",
-              }}
-              type="submit"
-              variant="contained"
-            >
-              Add
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+        </form>
+      </LocalizationProvider>
     </div>
   );
 }

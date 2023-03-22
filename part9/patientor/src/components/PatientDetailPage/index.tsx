@@ -54,8 +54,8 @@ const PatientDetailPage = ({ patients, diagnosis, updatePatients }: Props) => {
   const setAlert = (message: string): void => {
     setAlertMessage(message);
 
-    setTimeout(()=>setAlert(""), 5000);
-  }
+    setTimeout(() => setAlert(""), 5000);
+  };
 
   return (
     <div>
@@ -67,7 +67,12 @@ const PatientDetailPage = ({ patients, diagnosis, updatePatients }: Props) => {
       ) : (
         <Alert severity="error">{alertMessage}</Alert>
       )}
-      <AddEntryForm patient={patient} updatePatients={updatePatients} setAlert={setAlert}/>
+      <AddEntryForm
+        patient={patient}
+        updatePatients={updatePatients}
+        setAlert={setAlert}
+        diagnosis={diagnosis}
+      />
       <h4>
         {patient.entries.map((entry) => (
           <div key={entry.id}>{buildDiagnosesCode(entry)}</div>
